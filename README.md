@@ -1,0 +1,159 @@
+# EcoGuard - Environmental Monitoring System
+
+IoT driven environmental monitoring system with ESP32, Spring Boot backend, and Vue.js frontend.
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/erdemonal11/EcoGuard.git
+cd EcoGuard
+```
+
+## Requirements
+
+### Backend
+- Java 17 or higher
+- Gradle (included via wrapper)
+
+### Frontend
+- Node.js 18 or higher
+- npm or yarn
+
+### Embedded
+- ESP32 microcontroller
+- MicroPython firmware
+- SCD41 sensor (Temperature, Humidity, CO₂)
+- Light sensor (photoresistor)
+- OLED display (I2C)
+- Hardware components (resistors, wires, breadboard)
+
+See `embedded/README.md` for detailed hardware setup and circuit diagram.
+
+## Setup
+
+### Backend
+
+```bash
+cd backend
+./gradlew bootRun
+```
+
+Backend runs on `http://localhost:8080`
+
+**First run:**
+- Database will be automatically created at `backend/data/ecoguard-db.mv.db`
+- Default admin and user accounts are created automatically
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend runs on `http://localhost:5173`
+
+### Embedded
+
+See `embedded/README.md` for detailed setup instructions.
+
+**Quick setup:**
+1. Upload `main.py` and driver files to ESP32
+2. Configure WiFi credentials in `main.py`
+3. Set `BACKEND_IP` to your backend server IP
+4. Run `main.py`
+
+## Default Credentials
+
+- **Admin**: `admin` / `admin`
+- **User**: `user` / `user`
+
+## Features
+
+- Concurrent sensor monitoring (Temperature, Humidity, CO₂, Light)
+- Threshold alerts
+- Historical data visualization
+- Device command system (Admin)
+- Webhook notifications
+- Mobile ready API (device tokens)
+
+## Technologies
+
+- **Backend**: Spring Boot 3.4, H2 Database, JPA
+- **Frontend**: Vue.js 3, Vite
+- **Embedded**: MicroPython, ESP32
+
+## Project Structure
+
+```
+EcoGuard/
+├── backend/          # Spring Boot API
+├── frontend/         # Vue.js Dashboard
+└── embedded/         # ESP32 MicroPython code
+```
+
+## API Endpoints
+
+### Authentication
+- `POST /api/auth/login` - User login
+- `PUT /api/auth/device-token` - Update device token (mobile)
+
+### Device (X-Device-Key)
+- `POST /api/device/sensor-data` - Send sensor data
+- `GET /api/device/thresholds` - Get thresholds
+- `GET /api/device/commands` - Get pending commands
+- `PUT /api/device/commands/{id}/ack` - Acknowledge command
+
+### User (Bearer Token)
+- `GET /api/user/sensor-data` - Get all sensor data
+- `GET /api/user/sensor-data/latest` - Get latest reading
+- `GET /api/user/sensor-data/range` - Get data range
+- `GET /api/user/thresholds` - Get thresholds (read-only)
+- `GET /api/user/thresholds/by-metric/{metricType}` - Get threshold by metric
+- `GET /api/user/alerts` - Get all alerts
+- `GET /api/user/alerts/{id}` - Get alert by ID
+
+### Admin (Bearer Token)
+- `GET /api/admin/sensor-data` - Get all sensor data
+- `GET /api/admin/sensor-data/latest` - Get latest reading
+- `GET /api/admin/sensor-data/range` - Get data range
+- `GET /api/admin/thresholds` - Get all thresholds
+- `GET /api/admin/thresholds/{id}` - Get threshold by ID
+- `GET /api/admin/thresholds/by-metric/{metricType}` - Get threshold by metric
+- `PUT /api/admin/thresholds/{id}` - Update threshold
+- `DELETE /api/admin/thresholds/{id}` - Delete threshold
+- `GET /api/admin/alerts` - Get all alerts
+- `GET /api/admin/alerts/{id}` - Get alert by ID
+- `POST /api/admin/device/commands` - Send device command
+- `GET /api/admin/device/commands` - Get all commands
+- `GET /api/admin/device/commands/by-device/{deviceKey}` - Get commands by device
+
+## Database
+
+H2 database: `backend/data/ecoguard-db.mv.db`
+
+![Database Schema](diagrams/DB_Diagram.png)
+
+Access H2 Console: `http://localhost:8080/h2-console`
+- JDBC URL: `jdbc:h2:file:./data/ecoguard-db`
+- Username: `sa`
+- Password: (empty)
+
+## Diagrams
+
+**Activity Diagram** 
+![Activity Diagram](diagrams/Activity_Diagram.png)
+
+
+**State Machine Diagram** 
+![State Machine Diagram](diagrams/State_Machine_Diagram.png)
+
+
+**Database Schema** 
+![Database Schema](diagrams/DB_Diagram.png)
+
+
+
