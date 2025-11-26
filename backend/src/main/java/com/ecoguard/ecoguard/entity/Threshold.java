@@ -26,7 +26,4 @@ public class Threshold {
     @Column(name = "max_value", precision = 10, scale = 2, nullable = false)
     private BigDecimal maxValue;
 
-    @Column(name = "disabled", nullable = false)
-    private Boolean disabled = false;
-
 }

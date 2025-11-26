@@ -30,6 +30,9 @@ public class SensorData {
     @Column(name = "timestamp", nullable = false)
     private LocalDateTime timestamp;
 
+    @Column(name = "ip_address")
+    private String ipAddress;
+
     @PrePersist
     public void prePersist() {
         if (timestamp == null) {

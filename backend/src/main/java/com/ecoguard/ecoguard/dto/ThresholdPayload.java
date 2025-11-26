@@ -30,15 +30,5 @@ public class ThresholdPayload {
     public void setMaxValue(BigDecimal maxValue) {
         this.maxValue = maxValue;
     }
-
-    private Boolean disabled;
-
-    public Boolean getDisabled() {
-        return disabled;
-    }
-
-    public void setDisabled(Boolean disabled) {
-        this.disabled = disabled;
-    }
 }
 

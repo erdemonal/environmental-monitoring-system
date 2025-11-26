@@ -56,6 +56,15 @@ npm run dev
 
 Frontend runs on `http://localhost:5173`
 
+When serving the built frontend (e.g., `npm run build` + `npm run preview` or hosting the `dist/` output behind another server), expose the backend URL via an environment variable:
+
+```bash
+# inside frontend/
+VITE_API_BASE=http://localhost:8080 npm run preview
+```
+
+You can also create a `.env.local` file with `VITE_API_BASE=http://<backend-host>:8080`.
+
 ### Embedded
 
 See `embedded/README.md` for detailed setup instructions.

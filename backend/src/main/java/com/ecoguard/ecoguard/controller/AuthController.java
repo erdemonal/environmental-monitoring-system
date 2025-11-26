@@ -1,9 +1,12 @@
 package com.ecoguard.ecoguard.controller;
 
+import com.ecoguard.ecoguard.config.AuthInterceptor;
 import com.ecoguard.ecoguard.config.AuthTokenService;
 import com.ecoguard.ecoguard.entity.User;
 import com.ecoguard.ecoguard.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -16,10 +19,12 @@ public class AuthController {
 
     private final UserRepository userRepository;
     private final AuthTokenService tokenService;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthController(UserRepository userRepository, AuthTokenService tokenService) {
+    public AuthController(UserRepository userRepository, AuthTokenService tokenService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.tokenService = tokenService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/login")
@@ -31,7 +36,7 @@ public class AuthController {
             return ResponseEntity.status(401).body(Map.of("message", "Invalid credentials"));
         }
         User user = userOpt.get();
-        if (!password.equals(user.getPasswordHash())) {
+        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
             return ResponseEntity.status(401).body(Map.of("message", "Invalid credentials"));
         }
         String token = tokenService.createSession(user.getUsername(), user.getRole());
@@ -41,5 +46,24 @@ public class AuthController {
         resp.put("role", user.getRole());
         return ResponseEntity.ok(resp);
     }
-}
 
+    @PutMapping("/device-token")
+    public ResponseEntity<?> updateDeviceToken(@RequestBody Map<String, String> body, HttpServletRequest request) {
+        String deviceToken = body.get("token");
+        if (deviceToken == null || deviceToken.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Device token required"));
+        }
+        AuthTokenService.Session session = (AuthTokenService.Session) request.getAttribute(AuthInterceptor.ATTR_SESSION);
+        if (session == null) {
+            return ResponseEntity.status(401).body(Map.of("message", "Unauthorized"));
+        }
+        Optional<User> userOpt = userRepository.findByUsername(session.username());
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(404).body(Map.of("message", "User not found"));
+        }
+        User user = userOpt.get();
+        user.setDeviceToken(deviceToken);
+        userRepository.save(user);
+        return ResponseEntity.ok(Map.of("message", "Device token updated"));
+    }
+}
