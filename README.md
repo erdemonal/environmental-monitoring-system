@@ -1,6 +1,6 @@
-# EcoGuard - Environmental Monitoring System
+# EcoGuard 
 
-IoT driven environmental monitoring system with ESP32, Spring Boot backend, and Vue.js frontend.
+Environmental monitoring system with ESP32, Spring Boot backend, and Vue.js frontend
 
 ## Installation
 
@@ -80,21 +80,6 @@ See `embedded/README.md` for detailed setup instructions.
 - **Admin**: `admin` / `admin`
 - **User**: `user` / `user`
 
-## Features
-
-- Concurrent sensor monitoring (Temperature, Humidity, CO₂, Light)
-- Threshold alerts
-- Historical data visualization
-- Device command system (Admin)
-- Webhook notifications
-- Mobile ready API (device tokens)
-
-## Technologies
-
-- **Backend**: Spring Boot 3.4, H2 Database, JPA
-- **Frontend**: Vue.js 3, Vite
-- **Embedded**: MicroPython, ESP32
-
 ## Project Structure
 
 ```
@@ -167,5 +152,4 @@ Access H2 Console: `http://localhost:8080/h2-console`
 
 ![Database Schema](diagrams/DB_Diagram.png)
 
-
-
+Made with ❤️ in Saint-Étienne
