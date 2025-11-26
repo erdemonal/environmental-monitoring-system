@@ -6,9 +6,9 @@ from scd4x import SCD4X
 from ssd1306 import SSD1306_I2C
 import neopixel
 
-WIFI_SSID = "erdem"
-WIFI_PASSWORD = "erdem124"
-BACKEND_IP = "172.20.10.2"
+WIFI_SSID = "x"
+WIFI_PASSWORD = "x"
+BACKEND_IP = "x"
 DEVICE_KEY = "demo-device-key"
 WEBHOOK_URL = None
 LIGHT_SENSOR_PIN = 34
