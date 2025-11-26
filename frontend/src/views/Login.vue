@@ -82,7 +82,7 @@ function handleKeyPress(e) {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  background: #020617 url('/iot.jpg') center/cover no-repeat fixed;
+  background: linear-gradient(120deg, #eef2f3 0%, #dfe9f3 100%);
 }
 
 .center {
@@ -140,6 +140,7 @@ h1 {
   text-align: center;
   color: #374151;
   font-size: 14px;
+  font-weight: 700;
   margin: 0 0 24px 0;
 }
 
