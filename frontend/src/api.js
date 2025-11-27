@@ -87,7 +87,7 @@ export function sendDeviceCommand(deviceKey, commandType, parameters) {
 }
 
 export function getDeviceCommands(deviceKey) {
-  return request(`/api/admin/device/commands/by-device/${deviceKey}`)
+  return request(`/api/admin/device/commands/by-device/${deviceKey}/history`)
 }
 
 export function getDeviceStatus() {
@@ -97,5 +97,6 @@ export function getDeviceStatus() {
 export function getHealth() {
   return request('/api/health')
 }
+
 
 

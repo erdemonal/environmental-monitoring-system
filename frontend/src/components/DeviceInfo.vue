@@ -7,6 +7,7 @@ const error = ref('')
 const status = ref(null)
 const health = ref(null)
 
+
 const pins = [
   { name: 'Button A', pin: 15, action: 'WiFi info' },
   { name: 'Button B', pin: 32, action: 'Threshold list' },
@@ -55,7 +56,22 @@ function adminMessage() {
   return status.value?.lastAdminMessage || '—'
 }
 
+function isOnline() {
+  return Boolean(status.value?.online)
+}
+
+function lastSeenText() {
+  const sec = status.value?.secondsSinceLastSeen
+  if (sec == null) return 'Last seen: —'
+  if (sec < 60) return `Last seen ${sec}s ago`
+  const minutes = Math.floor(sec / 60)
+  if (minutes < 60) return `Last seen ${minutes}m ago`
+  const hours = Math.floor(minutes / 60)
+  return `Last seen ${hours}h ago`
+}
+
 onMounted(load)
+
 </script>
 
 <template>
@@ -65,13 +81,15 @@ onMounted(load)
       <p v-if="loading">Loading...</p>
       <p v-else-if="error" class="error">{{ error }}</p>
       <div v-else>
+        <div class="status-line">
+          <span :class="['pill', isOnline() ? 'online' : 'offline']">
+            {{ isOnline() ? 'Online' : 'Offline' }}
+          </span>
+          <span class="last-seen">{{ lastSeenText() }}</span>
+        </div>
         <div class="row">
           <span>Last reading</span>
           <strong>{{ fmt(status?.lastReadingTime) }}</strong>
-        </div>
-        <div class="row">
-          <span>Device IP</span>
-          <strong>{{ status?.lastIpAddress ?? '—' }}</strong>
         </div>
         <div class="row">
           <span>Temperature</span>
@@ -170,11 +188,53 @@ onMounted(load)
   font-size: 14px;
   gap: 8px;
 }
+.status-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.pill {
+  padding: 2px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+.pill.online {
+  background: #d1fae5;
+  color: #065f46;
+  border-color: #a7f3d0;
+}
+.pill.offline {
+  background: #fee2e2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+.last-seen {
+  font-size: 12px;
+  color: #6b7280;
+}
 .row span {
   color: #6b7280;
 }
 .row strong {
   text-align: right;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+}
+.field input {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.success {
+  color: #065f46;
+  margin-top: 6px;
 }
 .error {
   color: #b91c1c;

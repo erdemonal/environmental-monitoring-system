@@ -7,17 +7,51 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+/**
+ * Spring MVC interceptor for authentication and authorization.
+ * <p>
+ * Intercepts all HTTP requests and validates authentication tokens. Handles three
+ * types of endpoints:
+ * <ul>
+ *   <li>Public endpoints (/api/auth/login) - no authentication required</li>
+ *   <li>Device endpoints (/api/device) - requires X-Device-Key header</li>
+ *   <li>User/Admin endpoints - requires Bearer token and role-based authorization</li>
+ * </ul>
+ * Sets the authenticated session as a request attribute for use in controllers.
+ *
+ * @author EcoGuard 
+ * @since 1.0
+ */
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
 
+    /**
+     * Request attribute name for storing the authenticated session.
+     */
     public static final String ATTR_SESSION = "authSession";
 
     private final AuthTokenService tokenService;
 
+    /**
+     * Constructs a new AuthInterceptor with required dependencies.
+     *
+     * @param tokenService service for token validation
+     */
     public AuthInterceptor(AuthTokenService tokenService) {
         this.tokenService = tokenService;
     }
 
+    /**
+     * Intercepts requests before handler execution to perform authentication and authorization.
+     * <p>
+     * Validates tokens, checks role-based access, and sets session attribute on success.
+     * Returns false to stop request processing if authentication/authorization fails.
+     *
+     * @param request the HTTP request
+     * @param response the HTTP response
+     * @param handler the target handler
+     * @return true if request should proceed, false to stop processing
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String path = request.getRequestURI();

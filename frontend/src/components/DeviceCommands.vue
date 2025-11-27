@@ -15,7 +15,8 @@ const commands = ref([])
 
 const commandTypes = [
   { value: 'SET_LED_COLOR', label: 'Flash Light', paramsHint: 'r,g,b (e.g., 255,0,0)' },
-  { value: 'DISPLAY_MESSAGE', label: 'Display Message', paramsHint: 'message text' }
+  { value: 'DISPLAY_MESSAGE', label: 'Display Message', paramsHint: 'message text' },
+  { value: 'BLE_BROADCAST', label: 'BLE Broadcast', paramsHint: 'start / stop / toggle' }
 ]
 
 function clampColor(val) {
@@ -61,6 +62,21 @@ async function loadCommands() {
 
 function getCommandLabel(type) {
   return commandTypes.find(c => c.value === type)?.label || type
+}
+
+function formatDate(ts) {
+  return ts ? new Date(ts).toLocaleString() : '—'
+}
+
+function statusHint(cmd) {
+  if (cmd.executed) {
+    return cmd.executedAt ? `Ack ${new Date(cmd.executedAt).toLocaleTimeString()}` : 'Acked'
+  }
+  if (!cmd.createdAt) return 'Waiting'
+  const seconds = Math.max(0, Math.round((Date.now() - new Date(cmd.createdAt).getTime()) / 1000))
+  if (seconds < 60) return `Waiting ${seconds}s`
+  const minutes = Math.floor(seconds / 60)
+  return `Waiting ${minutes}m`
 }
 
 let refreshInterval = null
@@ -114,8 +130,8 @@ onUnmounted(() => {
     <p v-if="success" style="color:#059669;margin-top:8px">{{ success }}</p>
 
     <div class="panel" style="margin-top:16px">
-      <div class="panel-title">Pending Commands</div>
-      <div v-if="commands.length === 0" class="muted">No commands sent</div>
+      <div class="panel-title">Recent Commands</div>
+      <div v-if="commands.length === 0" class="muted">No commands yet</div>
       <div v-else class="table">
         <div class="thead grid4">
           <div>Type</div>
@@ -124,15 +140,21 @@ onUnmounted(() => {
           <div>Time</div>
         </div>
         <div class="tbody">
-          <div class="row grid4" v-for="cmd in commands.slice(0, 10)" :key="cmd.id">
+          <div class="row grid4" v-for="cmd in commands" :key="cmd.id">
             <div>{{ getCommandLabel(cmd.commandType) }}</div>
             <div>{{ cmd.parameters || '—' }}</div>
             <div>
-              <span :class="cmd.executed ? 'badge success' : 'badge pending'">
-                {{ cmd.executed ? 'Executed' : 'Pending' }}
-              </span>
+              <div class="status-cell">
+                <span :class="cmd.executed ? 'badge success' : 'badge pending'">
+                  {{ cmd.executed ? 'Delivered' : 'Pending' }}
+                </span>
+                <small>{{ statusHint(cmd) }}</small>
+              </div>
             </div>
-            <div class="small">{{ new Date(cmd.createdAt).toLocaleString() }}</div>
+            <div class="small">
+              <div>Sent {{ formatDate(cmd.createdAt) }}</div>
+              <div v-if="cmd.executedAt">Ack {{ formatDate(cmd.executedAt) }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -248,6 +270,15 @@ input, select {
   background: #fef3c7;
   border-color: #fde68a;
   color: #92400e;
+}
+.status-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.status-cell small {
+  font-size: 11px;
+  color: #6b7280;
 }
 .small {
   font-size: 12px;

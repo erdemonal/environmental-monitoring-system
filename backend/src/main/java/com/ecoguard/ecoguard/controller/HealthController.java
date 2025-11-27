@@ -10,16 +10,40 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * REST controller for system health monitoring.
+ * <p>
+ * Provides a health check endpoint that reports application status and database
+ * connectivity. Used by monitoring tools and displayed in the admin panel's
+ * System Health card.
+ *
+ * @author EcoGuard 
+ * @since 1.0
+ */
 @RestController
 @RequestMapping("/api/health")
 public class HealthController {
 
     private final SensorDataRepository sensorDataRepository;
 
+    /**
+     * Constructs a new HealthController with required dependencies.
+     *
+     * @param sensorDataRepository repository used to test database connectivity
+     */
     public HealthController(SensorDataRepository sensorDataRepository) {
         this.sensorDataRepository = sensorDataRepository;
     }
 
+    /**
+     * Performs a health check on the application and database.
+     * <p>
+     * Returns the application status (always "UP" if endpoint is reachable),
+     * current server time, and database status with sensor data row count.
+     * If database access fails, the db status is set to "DOWN" with error details.
+     *
+     * @return ResponseEntity containing health status information
+     */
     @GetMapping
     public ResponseEntity<Map<String, Object>> health() {
         Map<String, Object> body = new HashMap<>();

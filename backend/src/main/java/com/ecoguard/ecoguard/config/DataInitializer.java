@@ -1,9 +1,6 @@
 package com.ecoguard.ecoguard.config;
 
-import com.ecoguard.ecoguard.entity.Role;
-import com.ecoguard.ecoguard.entity.MetricType;
-import com.ecoguard.ecoguard.entity.Threshold;
-import com.ecoguard.ecoguard.entity.User;
+import com.ecoguard.ecoguard.entity.*;
 import com.ecoguard.ecoguard.repository.ThresholdRepository;
 import com.ecoguard.ecoguard.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -11,9 +8,33 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+/**
+ * Configuration class for initializing default data on application startup.
+ * <p>
+ * Seeds the database with default users and threshold configurations using
+ * Spring Boot's CommandLineRunner beans. Runs automatically when the application starts.
+ *
+ * @author EcoGuard 
+ * @since 1.0
+ */
 @Configuration
 public class DataInitializer {
+    /**
+     * Default constructor.
+     */
+    public DataInitializer() {
+    }
 
+    /**
+     * Seeds default users into the database.
+     * <p>
+     * Creates admin and user accounts if they don't exist, or updates passwords
+     * if they do exist but passwords don't match.
+     *
+     * @param userRepository repository for user persistence
+     * @param passwordEncoder encoder for password hashing
+     * @return CommandLineRunner that executes on application startup
+     */
     @Bean
 	CommandLineRunner seedUsers(UserRepository userRepository, PasswordEncoder passwordEncoder) {
 		return args -> {
@@ -25,6 +46,15 @@ public class DataInitializer {
 		};
 	}
 
+	/**
+	 * Seeds default threshold configurations into the database.
+	 * <p>
+	 * Creates default thresholds for TEMP, HUMIDITY, CO2, and LIGHT metrics
+	 * if they don't already exist.
+	 *
+	 * @param thresholdRepository repository for threshold persistence
+	 * @return CommandLineRunner that executes on application startup
+	 */
 	@Bean
 	CommandLineRunner seedDefaults(ThresholdRepository thresholdRepository) {
 		return args -> {
@@ -59,6 +89,18 @@ public class DataInitializer {
 		};
 	}
 
+    /**
+     * Helper method to seed a single user into the database.
+     * <p>
+     * Creates the user if it doesn't exist, or updates the password if it exists
+     * but the password doesn't match.
+     *
+     * @param userRepository repository for user persistence
+     * @param passwordEncoder encoder for password hashing
+     * @param username the username to create or update
+     * @param password the plain text password to hash and store
+     * @param role the user's role (ADMIN or USER)
+     */
     private void seedUser(UserRepository userRepository, PasswordEncoder passwordEncoder, String username, String password, Role role) {
         userRepository.findByUsername(username).ifPresentOrElse(
                 u -> {

@@ -12,21 +12,46 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * REST controller for user access to sensor data.
+ * <p>
+ * Provides read-only endpoints for retrieving sensor readings. Users can view
+ * all readings, get the latest reading, or query readings within a time range.
+ * All endpoints require authentication (USER or ADMIN role).
+ *
+ * @author EcoGuard 
+ * @since 1.0
+ */
 @RestController
 @RequestMapping("/api/user/sensor-data")
 public class SensorDataController {
 
     private final SensorDataRepository sensorDataRepository;
 
+    /**
+     * Constructs a new SensorDataController with required dependencies.
+     *
+     * @param sensorDataRepository repository for sensor data access
+     */
     public SensorDataController(SensorDataRepository sensorDataRepository) {
         this.sensorDataRepository = sensorDataRepository;
     }
 
+    /**
+     * Retrieves all sensor readings from the database.
+     *
+     * @return list of all sensor data records
+     */
     @GetMapping
     public List<SensorData> getAll() {
         return sensorDataRepository.findAll();
     }
 
+    /**
+     * Retrieves the most recent sensor reading.
+     *
+     * @return ResponseEntity containing the latest sensor data, or 404 Not Found if no data exists
+     */
     @GetMapping("/latest")
     public ResponseEntity<SensorData> getLatest() {
         return sensorDataRepository.findTopByOrderByTimestampDesc()
@@ -34,6 +59,16 @@ public class SensorDataController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    /**
+     * Retrieves sensor readings within a specified time range.
+     * <p>
+     * Useful for generating charts and historical analysis. Both start and end
+     * timestamps are inclusive.
+     *
+     * @param start the start timestamp (ISO 8601 format)
+     * @param end the end timestamp (ISO 8601 format)
+     * @return list of sensor data records within the specified time range
+     */
     @GetMapping("/range")
     public List<SensorData> getRange(
             @RequestParam("start") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,

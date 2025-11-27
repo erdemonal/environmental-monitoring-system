@@ -12,7 +12,6 @@ import com.ecoguard.ecoguard.repository.AlertRepository;
 import com.ecoguard.ecoguard.repository.DeviceCommandRepository;
 import com.ecoguard.ecoguard.repository.SensorDataRepository;
 import com.ecoguard.ecoguard.repository.ThresholdRepository;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +28,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * REST controller for ESP32 device communication.
+ * <p>
+ * Handles sensor data ingestion from the device, threshold retrieval, and command
+ * management. This is the primary interface between the ESP32 and the backend.
+ * All endpoints require the X-Device-Key header for authentication.
+ *
+ * @author EcoGuard 
+ * @since 1.0
+ */
 @RestController
 @RequestMapping("/api/device")
 public class DeviceSensorController {
@@ -38,6 +47,14 @@ public class DeviceSensorController {
     private final AlertRepository alertRepository;
     private final DeviceCommandRepository deviceCommandRepository;
 
+    /**
+     * Constructs a new DeviceSensorController with required dependencies.
+     *
+     * @param sensorDataRepository repository for sensor data persistence
+     * @param thresholdRepository repository for threshold retrieval
+     * @param alertRepository repository for alert creation
+     * @param deviceCommandRepository repository for command management
+     */
     public DeviceSensorController(SensorDataRepository sensorDataRepository,
                                   ThresholdRepository thresholdRepository,
                                   AlertRepository alertRepository,
@@ -48,8 +65,21 @@ public class DeviceSensorController {
         this.deviceCommandRepository = deviceCommandRepository;
     }
 
+    /**
+     * Ingests sensor data from the ESP32 device.
+     * <p>
+     * Accepts sensor readings (temperature, humidity, CO2, light) and:
+     * <ul>
+     *   <li>Persists the data to the database</li>
+     *   <li>Evaluates each metric against configured thresholds</li>
+     *   <li>Creates alerts for any threshold breaches</li>
+     * </ul>
+     *
+     * @param payload the sensor data payload from the device
+     * @return ResponseEntity containing the saved sensor data ID and list of created alert IDs
+     */
     @PostMapping("/sensor-data")
-    public ResponseEntity<?> ingest(@RequestBody SensorDataPayload payload, HttpServletRequest request) {
+    public ResponseEntity<?> ingest(@RequestBody SensorDataPayload payload) {
         if (payload == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "Payload required"));
         }
@@ -66,7 +96,6 @@ public class DeviceSensorController {
         data.setHumidity(payload.getHumidity());
         data.setCo2Level(payload.getCo2Level());
         data.setLightLevel(payload.getLightLevel());
-        data.setIpAddress(resolveClientIp(request));
         if (payload.getTimestamp() != null) {
             data.setTimestamp(payload.getTimestamp());
         } else {
@@ -86,6 +115,14 @@ public class DeviceSensorController {
         ));
     }
 
+    /**
+     * Retrieves all threshold configurations for the device.
+     * <p>
+     * Called by the ESP32 device to fetch current threshold values for local
+     * evaluation. Returns thresholds in a format suitable for device processing.
+     *
+     * @return list of threshold configurations
+     */
     @GetMapping("/thresholds")
     public List<ThresholdDeviceResponse> getThresholds() {
         return thresholdRepository.findAll().stream()
@@ -97,6 +134,15 @@ public class DeviceSensorController {
                 .toList();
     }
 
+    /**
+     * Retrieves pending commands for the device.
+     * <p>
+     * Called periodically by the ESP32 to check for new commands from administrators.
+     * Returns only unexecuted commands, ordered by creation time (oldest first).
+     *
+     * @param deviceKey the device key from the X-Device-Key header
+     * @return list of pending commands for the device
+     */
     @GetMapping("/commands")
     public List<DeviceCommandResponse> getCommands(@RequestHeader("X-Device-Key") String deviceKey) {
         List<DeviceCommand> commands = deviceCommandRepository.findByDeviceKeyAndExecutedFalseOrderByCreatedAtAsc(deviceKey);
@@ -111,6 +157,16 @@ public class DeviceSensorController {
                 .toList();
     }
 
+    /**
+     * Acknowledges that a command has been executed by the device.
+     * <p>
+     * Called by the ESP32 after successfully executing a command. Marks the command
+     * as executed and records the execution timestamp.
+     *
+     * @param deviceKey the device key from the X-Device-Key header
+     * @param id the command ID to acknowledge
+     * @return ResponseEntity with success message, or 404 Not Found if command doesn't exist
+     */
     @PutMapping("/commands/{id}/ack")
     public ResponseEntity<?> acknowledgeCommand(@RequestHeader("X-Device-Key") String deviceKey, @PathVariable Long id) {
         return deviceCommandRepository.findByIdAndDeviceKey(id, deviceKey)
@@ -123,6 +179,14 @@ public class DeviceSensorController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+
+    /**
+     * Evaluates a sensor value against its threshold and creates an alert if breached.
+     *
+     * @param metric the metric type to evaluate
+     * @param value the sensor value to check
+     * @param alerts list to add created alerts to
+     */
     private void evaluateMetric(MetricType metric, BigDecimal value, List<Alert> alerts) {
         if (value == null) {
             return;
@@ -140,20 +204,25 @@ public class DeviceSensorController {
         });
     }
 
+    /**
+     * Converts a BigDecimal to BigDecimal (no-op, for method overloading).
+     *
+     * @param value the BigDecimal value
+     * @return the same BigDecimal value
+     */
     private BigDecimal toBigDecimal(BigDecimal value) {
         return value;
     }
 
+    /**
+     * Converts an Integer to BigDecimal.
+     *
+     * @param value the Integer value to convert
+     * @return BigDecimal representation, or null if input is null
+     */
     private BigDecimal toBigDecimal(Integer value) {
         return value == null ? null : new BigDecimal(value);
     }
 
-    private String resolveClientIp(HttpServletRequest request) {
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (forwarded != null && !forwarded.isBlank()) {
-            return forwarded.split(",")[0].trim();
-        }
-        return request.getRemoteAddr();
-    }
 }
 
