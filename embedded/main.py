@@ -145,7 +145,6 @@ def flash_led(color, flashes=3, delay=0.18):
     except Exception as e:
         print("Flash LED error:", e)
     finally:
-        # Flash bittikten sonra her zaman default renge dön
         try:
             set_led(DEFAULT_LED_COLOR)
         except Exception:
@@ -491,7 +490,6 @@ def execute_command(cmd):
                     r = max(0, min(r, 255))
                     g = max(0, min(g, 255))
                     b = max(0, min(b, 255))
-                    # Admin rengi sadece kısa bir flash olarak kullan
                     flash_led((r, g, b))
                     print("LED flash color:", r, g, b)
         except Exception as e:
