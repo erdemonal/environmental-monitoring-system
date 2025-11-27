@@ -25,7 +25,7 @@ function clampColor(val) {
   return Math.min(255, Math.max(0, Math.floor(num)))
 }
 
-async function send() {
+async function send(params = null) {
   loading.value = true
   error.value = ''
   success.value = ''
@@ -36,10 +36,10 @@ async function send() {
         return
       }
     }
-    const params = commandType.value === 'SET_LED_COLOR'
+    const finalParams = commandType.value === 'SET_LED_COLOR'
       ? `${clampColor(ledR.value)},${clampColor(ledG.value)},${clampColor(ledB.value)}`
-      : (parameters.value || null)
-    await sendDeviceCommand(deviceKey.value, commandType.value, params)
+      : (params !== null ? params : (parameters.value || null))
+    await sendDeviceCommand(deviceKey.value, commandType.value, finalParams)
     success.value = 'Command sent successfully!'
     if (commandType.value !== 'SET_LED_COLOR') {
       parameters.value = ''
@@ -50,6 +50,10 @@ async function send() {
   } finally {
     loading.value = false
   }
+}
+
+async function sendBleCommand(action) {
+  await send(action)
 }
 
 async function loadCommands() {
@@ -117,11 +121,33 @@ onUnmounted(() => {
           <input type="number" min="0" max="255" v-model.number="ledB" />
         </div>
       </div>
+      <div class="field" v-else-if="commandType === 'BLE_BROADCAST'">
+        <label>BLE Broadcast Control</label>
+        <div class="ble-buttons">
+          <button class="btn ble-start" @click="sendBleCommand('start')" :disabled="loading">
+            Start
+          </button>
+          <button class="btn ble-toggle" @click="sendBleCommand('toggle')" :disabled="loading">
+            Toggle
+          </button>
+          <button class="btn ble-stop" @click="sendBleCommand('stop')" :disabled="loading">
+            Stop
+          </button>
+        </div>
+        <div class="cheat-sheet">
+          <strong>Cheat Sheet:</strong>
+          <ul>
+            <li><strong>Start:</strong> Starts BLE broadcast. Sensor data is transmitted via Bluetooth.</li>
+            <li><strong>Toggle:</strong> Turns BLE off if on, turns on if off.</li>
+            <li><strong>Stop:</strong> Stops BLE broadcast. WiFi operations resume.</li>
+          </ul>
+        </div>
+      </div>
       <div class="field" v-else>
         <label>Parameters</label>
         <input v-model="parameters" :placeholder="commandTypes.find(c => c.value === commandType)?.paramsHint || 'parameters'" />
       </div>
-      <button class="btn primary" @click="send" :disabled="loading">
+      <button class="btn primary" @click="send" :disabled="loading" v-if="commandType !== 'BLE_BROADCAST'">
         {{ loading ? 'Sending...' : 'Send Command' }}
       </button>
     </div>
@@ -283,6 +309,79 @@ input, select {
 .small {
   font-size: 12px;
   color: #6b7280;
+}
+.ble-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.ble-buttons .btn {
+  flex: 1;
+  min-width: 80px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.ble-buttons .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.ble-buttons .btn.ble-start {
+  background: #10b981;
+  color: #fff;
+  border-color: #10b981;
+}
+.ble-buttons .btn.ble-start:hover:not(:disabled) {
+  background: #059669;
+  border-color: #059669;
+}
+.ble-buttons .btn.ble-toggle {
+  background: #f59e0b;
+  color: #fff;
+  border-color: #f59e0b;
+}
+.ble-buttons .btn.ble-toggle:hover:not(:disabled) {
+  background: #d97706;
+  border-color: #d97706;
+}
+.ble-buttons .btn.ble-stop {
+  background: #ef4444;
+  color: #fff;
+  border-color: #ef4444;
+}
+.ble-buttons .btn.ble-stop:hover:not(:disabled) {
+  background: #dc2626;
+  border-color: #dc2626;
+}
+.cheat-sheet {
+  margin-top: 12px;
+  padding: 12px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #374151;
+}
+.cheat-sheet strong {
+  color: #111827;
+  display: block;
+  margin-bottom: 8px;
+}
+.cheat-sheet ul {
+  margin: 0;
+  padding-left: 20px;
+  list-style-type: disc;
+}
+.cheat-sheet li {
+  margin: 4px 0;
+  line-height: 1.5;
+}
+.cheat-sheet li strong {
+  display: inline;
+  color: #2563eb;
 }
 </style>
 

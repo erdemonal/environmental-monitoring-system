@@ -127,11 +127,12 @@ public class ThresholdController {
             audit.setUpdatedBy(updatedBy);
             thresholdAuditRepository.save(audit);
             
-            // Automatically send REFRESH_CONFIG command to device
+            // Automatically send REFRESH_CONFIG command to device with threshold info
             DeviceCommand refreshCmd = new DeviceCommand();
             refreshCmd.setDeviceKey("demo-device-key");
             refreshCmd.setCommandType("REFRESH_CONFIG");
-            refreshCmd.setParameters(null);
+            // Include which metric was updated
+            refreshCmd.setParameters("threshold_updated:" + saved.getMetricType().name());
             refreshCmd.setExecuted(false);
             deviceCommandRepository.save(refreshCmd);
             
