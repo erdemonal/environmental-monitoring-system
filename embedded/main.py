@@ -9,11 +9,18 @@ from ssd1306 import SSD1306_I2C
 import neopixel
 import ubluetooth
 
-WIFI_SSID = "x"
-WIFI_PASSWORD = "x"
-BACKEND_IP = "x"
-DEVICE_KEY = "demo-device-key"
+WIFI_SSID = None
+WIFI_PASSWORD = None
+BACKEND_IP = None
+DEVICE_KEY = None
 WEBHOOK_URL = None
+CONFIG_FILE = "eg_config.json"
+PROV_DEVICE_NAME = "EG-SETUP"
+PROV_SERVICE_UUID = ubluetooth.UUID("12345678-1234-5678-1234-56789abc0001")
+PROV_CHAR_UUID = ubluetooth.UUID("12345678-1234-5678-1234-56789abc0002")
+_IRQ_CENTRAL_CONNECT = 1
+_IRQ_CENTRAL_DISCONNECT = 2
+_IRQ_GATTS_WRITE = 3
 LIGHT_SENSOR_PIN = 34
 RGB_PIN = 5
 RGB_LED_COUNT = 1
@@ -25,9 +32,9 @@ BUTTON_A_PIN = 15
 BUTTON_B_PIN = 32
 BUTTON_C_PIN = 14
 BUTTON_DEBOUNCE_MS = 80
-BASE_URL = "http://" + BACKEND_IP + ":8080"
-THRESHOLD_URL = BASE_URL + "/api/device/thresholds"
-COMMAND_URL = BASE_URL + "/api/device/commands"
+BASE_URL = None
+THRESHOLD_URL = None
+COMMAND_URL = None
 COMMAND_CHECK_INTERVAL = 10
 BLE_COMMAND_CHECK_INTERVAL = 15  
 SCD41_REINIT_TIMEOUT = 30
@@ -39,6 +46,149 @@ oled = None
 light_sensor = None
 np = None
 last_light_color = (0, 0, 0)
+
+
+def load_stored_credentials():
+    try:
+        with open(CONFIG_FILE, "r") as fp:
+            data = fp.read()
+            if not data:
+                return None
+            return json.loads(data)
+    except Exception:
+        return None
+
+
+def save_stored_credentials(creds):
+    try:
+        with open(CONFIG_FILE, "w") as fp:
+            fp.write(json.dumps(creds))
+        print("Credentials saved to storage")
+        return True
+    except Exception as e:
+        print("Failed to save credentials:", e)
+        return False
+
+
+def apply_credentials(creds):
+    global WIFI_SSID, WIFI_PASSWORD, BACKEND_IP, DEVICE_KEY
+    global BASE_URL, THRESHOLD_URL, COMMAND_URL, BACKEND_URL
+
+    WIFI_SSID = creds.get("ssid") or ""
+    WIFI_PASSWORD = creds.get("password") or ""
+    BACKEND_IP = creds.get("backend_ip") or ""
+    DEVICE_KEY = creds.get("device_key") or ""
+
+    BASE_URL = "http://{}:8080".format(BACKEND_IP)
+    THRESHOLD_URL = BASE_URL + "/api/device/thresholds"
+    COMMAND_URL = BASE_URL + "/api/device/commands"
+    BACKEND_URL = BASE_URL + "/api/device/sensor-data"
+
+
+def _prov_adv_payload(name):
+    name_bytes = name.encode("utf-8")
+    return bytes(bytearray([len(name_bytes) + 1, 0x09]) + name_bytes)
+
+
+def provision_via_ble():
+    print("No stored credentials, entering BLE provisioning mode...")
+    prov_ble = ubluetooth.BLE()
+    prov_ble.active(True)
+    try:
+        prov_ble.config(gap_name=PROV_DEVICE_NAME)
+    except Exception:
+        pass
+
+    creds_char = (
+        PROV_CHAR_UUID,
+        ubluetooth.FLAG_WRITE | ubluetooth.FLAG_WRITE_NO_RESPONSE | ubluetooth.FLAG_READ
+    )
+    prov_service = (PROV_SERVICE_UUID, (creds_char,))
+    ((creds_handle,),) = prov_ble.gatts_register_services((prov_service,))
+    try:
+        prov_ble.gatts_set_buffer(creds_handle, 256, True)
+    except Exception:
+        pass
+    print("Prov service:", PROV_SERVICE_UUID)
+    print("Prov char:", PROV_CHAR_UUID, "handle:", creds_handle)
+
+    state = {"data": None}
+    connected = {"active": False}
+
+    if oled is not None:
+        oled.fill(0)
+        oled.text("BLE Setup", 0, 0)
+        oled.text("Use app to", 0, 10)
+        oled.text("send creds", 0, 20)
+        oled.show()
+
+    def _irq(event, data):
+        if event == _IRQ_GATTS_WRITE:
+            conn_handle, attr_handle = data
+            if attr_handle != creds_handle:
+                return
+            try:
+                raw = prov_ble.gatts_read(creds_handle)
+                payload = raw.decode().strip()
+                creds = json.loads(payload)
+                required = ("ssid", "password", "backend_ip", "device_key")
+                if all(creds.get(k) for k in required):
+                    state["data"] = creds
+                    print("Credentials received via BLE")
+                else:
+                    print("Provision payload missing fields")
+            except Exception as e:
+                print("Provision parse error:", e)
+        elif event == _IRQ_CENTRAL_CONNECT:
+            connected["active"] = True
+            print("Provision client connected")
+        elif event == _IRQ_CENTRAL_DISCONNECT:
+            connected["active"] = False
+            print("Provision client disconnected")
+            if state["data"] is None:
+                try:
+                    prov_ble.gap_advertise(250000, adv_data=adv, connectable=True)
+                except Exception as e:
+                    print("Resume advertise error:", e)
+
+    prov_ble.irq(_irq)
+    adv = _prov_adv_payload(PROV_DEVICE_NAME)
+    prov_ble.gap_advertise(250000, adv_data=adv, connectable=True)
+
+    while state["data"] is None:
+        time.sleep(0.2)
+        gc.collect()
+        if not connected["active"]:
+            try:
+                prov_ble.gap_advertise(250000, adv_data=adv, connectable=True)
+            except OSError:
+                pass
+
+    prov_ble.gap_advertise(None)
+    prov_ble.active(False)
+    if oled is not None:
+        oled.fill(0)
+        oled.text("BLE OK", 0, 0)
+        oled.text("Saving...", 0, 10)
+        oled.show()
+    return state["data"]
+
+
+def ensure_credentials():
+    creds = load_stored_credentials()
+    if creds:
+        apply_credentials(creds)
+        return True
+
+    while True:
+        try:
+            new_creds = provision_via_ble()
+            if new_creds and save_stored_credentials(new_creds):
+                apply_credentials(new_creds)
+                return True
+        except Exception as e:
+            print("Provisioning error:", e)
+        time.sleep(1)
 
 
 ble = None
@@ -110,7 +260,7 @@ async def init_rgb_led():
     global np
     try:
         np = neopixel.NeoPixel(Pin(RGB_PIN, Pin.OUT), RGB_LED_COUNT)
-        set_led((0, 5, 0))
+        set_led((0, 255, 0))
         print("RGB LED initialized")
     except Exception as e:
         print("RGB LED init error:", e)
@@ -258,7 +408,7 @@ last_threshold_fetch = 0
 current_ip = None
 last_admin_message = "No admin message"
 oled_override_until = 0
-DEFAULT_LED_COLOR = (0, 5, 0)
+DEFAULT_LED_COLOR = (0, 255, 0)
 
 def format_thresholds(data):
     parts = []
@@ -406,7 +556,7 @@ def reinit_scd41():
     except Exception as e:
         print("SCD41 reinit failed:", e)
 
-BACKEND_URL = BASE_URL + "/api/device/sensor-data"
+BACKEND_URL = None
 def connect_wifi():
     global current_ip
     current_ip = None
@@ -936,8 +1086,9 @@ def evaluate_thresholds(temp, hum, co2, light_level):
     
     return breaches
 
-
 print("Starting EcoGuard...")
+
+ensure_credentials()
 
 wifi_ok = connect_wifi()
 if not wifi_ok:
@@ -991,7 +1142,7 @@ while True:
                 not_ready_seconds = 0
 
                 if threshold_breaches:
-                    set_led((5, 0, 0))
+                    set_led((255, 0, 0))
                 else:
                     set_led(DEFAULT_LED_COLOR)
 

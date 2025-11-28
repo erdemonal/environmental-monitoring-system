@@ -26,6 +26,10 @@ function clampColor(val) {
 }
 
 async function send(params = null) {
+  if (params && typeof params.preventDefault === 'function') {
+    params.preventDefault()
+    params = null
+  }
   loading.value = true
   error.value = ''
   success.value = ''
@@ -147,7 +151,7 @@ onUnmounted(() => {
         <label>Parameters</label>
         <input v-model="parameters" :placeholder="commandTypes.find(c => c.value === commandType)?.paramsHint || 'parameters'" />
       </div>
-      <button class="btn primary" @click="send" :disabled="loading" v-if="commandType !== 'BLE_BROADCAST'">
+      <button class="btn primary" @click="send()" :disabled="loading" v-if="commandType !== 'BLE_BROADCAST'">
         {{ loading ? 'Sending...' : 'Send Command' }}
       </button>
     </div>
