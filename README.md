@@ -148,8 +148,4 @@ Access H2 Console: `http://localhost:8080/h2-console`
 ![State Machine Diagram](diagrams/State_Machine_Diagram.png)
 
 
-**Database Schema** 
-
-![Database Schema](diagrams/DB_Diagram.png)
-
 Made with ❤️ in Saint-Étienne
