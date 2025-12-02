@@ -17,7 +17,12 @@ async function submit() {
     localStorage.setItem('auth', JSON.stringify(res))
     navigate(res.role === 'ADMIN' ? '/admin' : '/user')
   } catch (e) {
-    error.value = e?.message || 'Login failed'
+    const errorMessage = e?.message || 'Login failed'
+    if (errorMessage.includes('401') || errorMessage.includes('Invalid credentials')) {
+      error.value = 'Invalid Username/Password'
+    } else {
+      error.value = errorMessage
+    }
   } finally {
     loading.value = false
   }

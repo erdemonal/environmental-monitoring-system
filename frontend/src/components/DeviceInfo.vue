@@ -26,6 +26,11 @@ async function load() {
     health.value = h
   } catch (e) {
     error.value = e?.message || 'Unable to load status'
+    health.value = {
+      status: 'DOWN',
+      time: null,
+      db: { status: 'DOWN' }
+    }
   } finally {
     loading.value = false
   }
@@ -36,6 +41,11 @@ async function refreshHealth() {
     health.value = await getHealth()
   } catch (e) {
     console.error(e)
+    health.value = {
+      status: 'DOWN',
+      time: null,
+      db: { status: 'DOWN' }
+    }
   }
 }
 
@@ -123,23 +133,34 @@ onMounted(load)
         <button class="btn-small" @click="refreshHealth">Get current</button>
       </div>
       <div v-if="!health">
-        <p class="muted">Health data not available</p>
+        <div class="row">
+          <span>App Status</span>
+          <strong>DOWN</strong>
+        </div>
+        <div class="row">
+          <span>Data Fetch Time</span>
+          <strong>N/A</strong>
+        </div>
+        <div class="row">
+          <span>DB Status</span>
+          <strong>DOWN</strong>
+        </div>
       </div>
       <div v-else>
         <div class="row">
-          <span>App status</span>
-          <strong>{{ health.status }}</strong>
+          <span>App Status</span>
+          <strong>{{ health.status ?? 'DOWN' }}</strong>
         </div>
         <div class="row">
-          <span>Time</span>
-          <strong>{{ health.time ? new Date(health.time).toLocaleString() : '—' }}</strong>
+          <span>Data Fetch Time</span>
+          <strong>{{ health.time ? new Date(health.time).toLocaleString() : 'N/A' }}</strong>
         </div>
         <div class="row">
-          <span>DB status</span>
-          <strong>{{ health.db?.status ?? '—' }}</strong>
+          <span>DB Status</span>
+          <strong>{{ health.db?.status ?? 'DOWN' }}</strong>
         </div>
         <div class="row">
-          <span>Sensor rows</span>
+          <span>Sensor Rows</span>
           <strong>{{ health.db?.sensorDataCount ?? '—' }}</strong>
         </div>
         <p class="hint">Backend health and DB row count.</p>
