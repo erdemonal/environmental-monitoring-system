@@ -85,8 +85,10 @@ onMounted(load)
 </script>
 
 <template>
-  <div class="device-info">
-    <div class="card">
+  <div>
+    <h2 class="section-title">Device Info</h2>
+    <div class="device-info">
+      <div class="card">
       <div class="card-title">Device Status</div>
       <p v-if="loading">Loading...</p>
       <p v-else-if="error" class="error">{{ error }}</p>
@@ -179,15 +181,20 @@ onMounted(load)
       </div>
       <p class="hint">Use this as wiring reference when rebuilding the ESP32 circuit.</p>
     </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.section-title {
+  margin: 16px 0 12px 0;
+  font-size: 20px;
+  font-weight: 700;
+}
 .device-info {
   display: grid;
   gap: 12px;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  margin-top: 12px;
 }
 .card {
   border: 1px solid #e5e7eb;

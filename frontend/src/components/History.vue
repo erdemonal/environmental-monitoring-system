@@ -211,6 +211,11 @@ export default {
 </script>
 
 <style scoped>
+h2 {
+  margin: 16px 0 12px 0;
+  font-size: 20px;
+  font-weight: 700;
+}
 .controls {
   display: flex;
   gap: 8px;

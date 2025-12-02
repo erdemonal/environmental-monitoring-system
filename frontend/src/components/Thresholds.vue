@@ -110,6 +110,11 @@ watch(() => props.adminMode, load)
 </template>
 
 <style scoped>
+h2 {
+  margin: 16px 0 12px 0;
+  font-size: 20px;
+  font-weight: 700;
+}
 .muted { color: #6b7280; margin-top: -4px; margin-bottom: 12px; }
 .table {
   display: grid;
