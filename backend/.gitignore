@@ -10,6 +10,8 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+backend/build/resolvedMainClassName
+backend/build/tmp/previous-compilation-data.bin
 
 .apt_generated
 .classpath
