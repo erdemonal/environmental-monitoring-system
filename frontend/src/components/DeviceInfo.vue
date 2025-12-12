@@ -26,6 +26,11 @@ async function load() {
     health.value = h
   } catch (e) {
     error.value = e?.message || 'Unable to load status'
+    health.value = {
+      status: 'DOWN',
+      time: null,
+      db: { status: 'DOWN' }
+    }
   } finally {
     loading.value = false
   }
@@ -36,6 +41,11 @@ async function refreshHealth() {
     health.value = await getHealth()
   } catch (e) {
     console.error(e)
+    health.value = {
+      status: 'DOWN',
+      time: null,
+      db: { status: 'DOWN' }
+    }
   }
 }
 
@@ -75,8 +85,10 @@ onMounted(load)
 </script>
 
 <template>
-  <div class="device-info">
-    <div class="card">
+  <div>
+    <h2 class="section-title">Device Info</h2>
+    <div class="device-info">
+      <div class="card">
       <div class="card-title">Device Status</div>
       <p v-if="loading">Loading...</p>
       <p v-else-if="error" class="error">{{ error }}</p>
@@ -123,23 +135,34 @@ onMounted(load)
         <button class="btn-small" @click="refreshHealth">Get current</button>
       </div>
       <div v-if="!health">
-        <p class="muted">Health data not available</p>
+        <div class="row">
+          <span>App Status</span>
+          <strong>DOWN</strong>
+        </div>
+        <div class="row">
+          <span>Data Fetch Time</span>
+          <strong>N/A</strong>
+        </div>
+        <div class="row">
+          <span>DB Status</span>
+          <strong>DOWN</strong>
+        </div>
       </div>
       <div v-else>
         <div class="row">
-          <span>App status</span>
-          <strong>{{ health.status }}</strong>
+          <span>App Status</span>
+          <strong>{{ health.status ?? 'DOWN' }}</strong>
         </div>
         <div class="row">
-          <span>Time</span>
-          <strong>{{ health.time ? new Date(health.time).toLocaleString() : '—' }}</strong>
+          <span>Data Fetch Time</span>
+          <strong>{{ health.time ? new Date(health.time).toLocaleString() : 'N/A' }}</strong>
         </div>
         <div class="row">
-          <span>DB status</span>
-          <strong>{{ health.db?.status ?? '—' }}</strong>
+          <span>DB Status</span>
+          <strong>{{ health.db?.status ?? 'DOWN' }}</strong>
         </div>
         <div class="row">
-          <span>Sensor rows</span>
+          <span>Sensor Rows</span>
           <strong>{{ health.db?.sensorDataCount ?? '—' }}</strong>
         </div>
         <p class="hint">Backend health and DB row count.</p>
@@ -158,15 +181,20 @@ onMounted(load)
       </div>
       <p class="hint">Use this as wiring reference when rebuilding the ESP32 circuit.</p>
     </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
+.section-title {
+  margin: 16px 0 12px 0;
+  font-size: 20px;
+  font-weight: 700;
+}
 .device-info {
   display: grid;
   gap: 12px;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  margin-top: 12px;
 }
 .card {
   border: 1px solid #e5e7eb;

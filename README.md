@@ -175,6 +175,7 @@ Access H2 Console: `http://localhost:8080/h2-console`
 **State Machine Diagram**  
 ![State Machine Diagram](diagrams/State_Machine_Diagram.png)
 
+<<<<<<< HEAD
 **Database Schema**  
 ![Database Schema](diagrams/DB_Diagram.png)
 
@@ -186,5 +187,7 @@ Access H2 Console: `http://localhost:8080/h2-console`
 
 ## Documentation approach 
 This README is organized with a Diátaxis mindset (tutorials, how-to, reference, explanations). See https://diataxis.fr/ for the philosophy.
+=======
+>>>>>>> 7c6cd686ae17dbf20a3c2846cf2251143a2fc914
 
 Made with ❤️ in Saint-Étienne

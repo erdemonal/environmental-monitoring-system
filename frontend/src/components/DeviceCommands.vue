@@ -193,6 +193,11 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+h2 {
+  margin: 16px 0 12px 0;
+  font-size: 20px;
+  font-weight: 700;
+}
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
