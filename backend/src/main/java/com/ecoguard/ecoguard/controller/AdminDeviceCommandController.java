@@ -93,7 +93,7 @@ public class AdminDeviceCommandController {
      * @return list of the 10 most recent commands for the device
      */
     @GetMapping("/by-device/{deviceKey}/history")
-    public List<DeviceCommand> getCommandHistory(@PathVariable String deviceKey) {
+    public List<DeviceCommand> getCommandHistory(@PathVariable("deviceKey") String deviceKey) {
         return deviceCommandRepository.findTop10ByDeviceKeyOrderByCreatedAtDesc(deviceKey);
     }
 }

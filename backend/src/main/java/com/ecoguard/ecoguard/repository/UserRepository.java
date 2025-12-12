@@ -23,5 +23,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return Optional containing the user if found, or empty if not found
      */
     Optional<User> findByUsername(String username);
+
+    /**
+     * Retrieves all users that have a registered device token.
+     *
+     * @return list of users with non-null device tokens
+     */
+    java.util.List<User> findByDeviceTokenIsNotNull();
 }
 

@@ -12,6 +12,8 @@ import com.ecoguard.ecoguard.repository.AlertRepository;
 import com.ecoguard.ecoguard.repository.DeviceCommandRepository;
 import com.ecoguard.ecoguard.repository.SensorDataRepository;
 import com.ecoguard.ecoguard.repository.ThresholdRepository;
+import com.ecoguard.ecoguard.repository.UserRepository;
+import com.ecoguard.ecoguard.service.PushNotificationService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,6 +48,8 @@ public class DeviceSensorController {
     private final ThresholdRepository thresholdRepository;
     private final AlertRepository alertRepository;
     private final DeviceCommandRepository deviceCommandRepository;
+    private final UserRepository userRepository;
+    private final PushNotificationService pushNotificationService;
 
     /**
      * Constructs a new DeviceSensorController with required dependencies.
@@ -58,11 +62,15 @@ public class DeviceSensorController {
     public DeviceSensorController(SensorDataRepository sensorDataRepository,
                                   ThresholdRepository thresholdRepository,
                                   AlertRepository alertRepository,
-                                  DeviceCommandRepository deviceCommandRepository) {
+                                  DeviceCommandRepository deviceCommandRepository,
+                                  UserRepository userRepository,
+                                  PushNotificationService pushNotificationService) {
         this.sensorDataRepository = sensorDataRepository;
         this.thresholdRepository = thresholdRepository;
         this.alertRepository = alertRepository;
         this.deviceCommandRepository = deviceCommandRepository;
+        this.userRepository = userRepository;
+        this.pushNotificationService = pushNotificationService;
     }
 
     /**
@@ -168,7 +176,7 @@ public class DeviceSensorController {
      * @return ResponseEntity with success message, or 404 Not Found if command doesn't exist
      */
     @PutMapping("/commands/{id}/ack")
-    public ResponseEntity<?> acknowledgeCommand(@RequestHeader("X-Device-Key") String deviceKey, @PathVariable Long id) {
+    public ResponseEntity<?> acknowledgeCommand(@RequestHeader("X-Device-Key") String deviceKey, @PathVariable("id") Long id) {
         return deviceCommandRepository.findByIdAndDeviceKey(id, deviceKey)
                 .map(cmd -> {
                     cmd.setExecuted(true);
@@ -200,8 +208,26 @@ public class DeviceSensorController {
                 alert.setTimestamp(LocalDateTime.now());
                 Alert savedAlert = alertRepository.save(alert);
                 alerts.add(savedAlert);
+                notifyUsers(savedAlert);
             }
         });
+    }
+
+    /**
+     * Sends a push notification to all users with a registered device token.
+     *
+     * @param alert the alert that was created
+     */
+    private void notifyUsers(Alert alert) {
+        String title = "EcoGuard Alert: " + alert.getMetricType();
+        String body = "Value " + alert.getValue() + " is outside thresholds.";
+        System.out.println("[FCM] notifyUsers -> " + title + " | " + body);
+        userRepository.findByDeviceTokenIsNotNull()
+                .forEach(user -> pushNotificationService.sendPushNotification(
+                        user.getDeviceToken(),
+                        title,
+                        body
+                ));
     }
 
     /**

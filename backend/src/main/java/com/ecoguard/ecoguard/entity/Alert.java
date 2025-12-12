@@ -66,6 +66,13 @@ public class Alert {
     private LocalDateTime timestamp;
 
     /**
+     * Whether the alert has been acknowledged by a user.
+     * Defaults to false when alert is created.
+     */
+    @Column(name = "acknowledged", nullable = false)
+    private Boolean acknowledged = false;
+
+    /**
      * JPA lifecycle callback to set timestamp before persisting.
      * Automatically sets {@code timestamp} to current time if not already set.
      */

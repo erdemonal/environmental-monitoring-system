@@ -5,10 +5,12 @@ import com.ecoguard.ecoguard.repository.AlertRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * REST controller for user access to alert data.
@@ -54,6 +56,23 @@ public class AlertController {
     public ResponseEntity<Alert> getAlertById(@PathVariable Long id) {
         return alertRepository.findById(id)
                 .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Marks an alert as acknowledged (read).
+     *
+     * @param id the alert ID to acknowledge
+     * @return ResponseEntity with success message, or 404 Not Found if alert doesn't exist
+     */
+    @PutMapping("/{id}/acknowledge")
+    public ResponseEntity<?> acknowledgeAlert(@PathVariable("id") Long id) {
+        return alertRepository.findById(id)
+                .map(alert -> {
+                    alert.setAcknowledged(true);
+                    alertRepository.save(alert);
+                    return ResponseEntity.ok(Map.of("message", "Alert acknowledged"));
+                })
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

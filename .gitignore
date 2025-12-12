@@ -24,3 +24,4 @@ Thumbs.db
 *.bak
 *.backup
 
+backend/src/main/resources/service-account-key.json

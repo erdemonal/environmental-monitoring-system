@@ -1,6 +1,6 @@
 # EcoGuard 
 
-Environmental monitoring system with ESP32, Spring Boot backend, and Vue.js frontend
+Environmental monitoring system with ESP32, Spring Boot backend, Vue.js frontend, and Android mobile app
 
 ## Installation
 
@@ -20,6 +20,13 @@ cd EcoGuard
 ### Frontend
 - Node.js 18 or higher
 - npm or yarn
+
+### Mobile
+- Android Studio (latest version)
+- Android SDK (API level 24+)
+- Kotlin
+- Firebase project with Cloud Messaging enabled
+- `google-services.json` file (download from Firebase Console)
 
 ### Embedded
 - ESP32 microcontroller
@@ -65,6 +72,29 @@ VITE_API_BASE=http://localhost:8080 npm run preview
 
 You can also create a `.env.local` file with `VITE_API_BASE=http://<backend-host>:8080`.
 
+### Mobile
+
+1. **Firebase Setup:**
+   - Create a Firebase project at https://console.firebase.google.com/
+   - Enable Cloud Messaging (FCM)
+   - Download `google-services.json` and place it in `mobile/app/`
+
+2. **Build and Run:**
+   ```bash
+   cd mobile
+   # Open in Android Studio or use Gradle:
+   ./gradlew assembleDebug
+   ```
+
+3. **Configuration:**
+   - For emulator: Backend URL is already set to `http://10.0.2.2:8080/`
+   - For real device: Update `BASE_URL` in `mobile/app/src/main/java/com/ecoguard/mobile/network/RetrofitClient.kt` to your backend's LAN IP (e.g., `http://192.168.x.x:8080/`)
+
+4. **First Run:**
+   - Login with default credentials (see Default Credentials section)
+   - Grant notification permissions when prompted
+   - Device token will be automatically sent to backend for push notifications
+
 ### Embedded
 
 See `embedded/README.md` for detailed setup instructions.
@@ -86,6 +116,7 @@ See `embedded/README.md` for detailed setup instructions.
 EcoGuard/
 ├── backend/          # Spring Boot API
 ├── frontend/         # Vue.js Dashboard
+├── mobile/           # Android mobile app (Kotlin)
 └── embedded/         # ESP32 MicroPython code
 ```
 
@@ -136,20 +167,24 @@ Access H2 Console: `http://localhost:8080/h2-console`
 - Username: `sa`
 - Password: (empty)
 
-## Diagrams
+## Diagrams 
 
-**Activity Diagram** 
-
+**Activity Diagram**  
 ![Activity Diagram](diagrams/Activity_Diagram.png)
 
-
-**State Machine Diagram** 
-
+**State Machine Diagram**  
 ![State Machine Diagram](diagrams/State_Machine_Diagram.png)
 
-
-**Database Schema** 
-
+**Database Schema**  
 ![Database Schema](diagrams/DB_Diagram.png)
+
+**Deployment Diagram**  
+![Deployment Diagram](diagrams/Deployment_Diagram.png)
+
+**Sequence Diagram **  
+![Sequence Diagram](diagrams/Sequence_Diagram.png)
+
+## Documentation approach 
+This README is organized with a Diátaxis mindset (tutorials, how-to, reference, explanations). See https://diataxis.fr/ for the philosophy.
 
 Made with ❤️ in Saint-Étienne

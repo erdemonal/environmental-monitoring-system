@@ -1,0 +1,3 @@
+2025-12-12 11:37:03.636106+01:00 jdbc[13]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "USERS" not found (candidates are: "users"); SQL statement:
+select username, device_token from users [42103-232]
