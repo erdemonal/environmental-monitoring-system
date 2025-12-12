@@ -25,3 +25,12 @@ Thumbs.db
 *.backup
 
 backend/src/main/resources/service-account-key.json
+
+
+backend/build/
+mobile/build/
+frontend/dist/
+frontend/node_modules/
+
+**/service-account-key.json
+**/build/**/service-account-key.json

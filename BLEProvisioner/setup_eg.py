@@ -6,9 +6,9 @@ TARGET_NAME = "EG-SETUP"
 CREDS_CHAR_UUID = "12345678-1234-5678-1234-56789abc0002"
 
 CREDS = {
-    "ssid": "Dawood",
-    "password": "Dfayad126",
-    "backend_ip": "172.20.10.9",
+    "ssid": "x",
+    "password": "x",
+    "backend_ip": "x",
     "device_key": "demo-device-key"
 }
 
