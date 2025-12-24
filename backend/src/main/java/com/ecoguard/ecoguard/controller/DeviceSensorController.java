@@ -14,6 +14,8 @@ import com.ecoguard.ecoguard.repository.SensorDataRepository;
 import com.ecoguard.ecoguard.repository.ThresholdRepository;
 import com.ecoguard.ecoguard.repository.UserRepository;
 import com.ecoguard.ecoguard.service.PushNotificationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,6 +45,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/device")
 public class DeviceSensorController {
+
+    private static final Logger logger = LoggerFactory.getLogger(DeviceSensorController.class);
 
     private final SensorDataRepository sensorDataRepository;
     private final ThresholdRepository thresholdRepository;
@@ -221,7 +225,7 @@ public class DeviceSensorController {
     private void notifyUsers(Alert alert) {
         String title = "EcoGuard Alert: " + alert.getMetricType();
         String body = "Value " + alert.getValue() + " is outside thresholds.";
-        System.out.println("[FCM] notifyUsers -> " + title + " | " + body);
+        logger.info("Notifying users about alert: {} | {}", title, body);
         userRepository.findByDeviceTokenIsNotNull()
                 .forEach(user -> pushNotificationService.sendPushNotification(
                         user.getDeviceToken(),

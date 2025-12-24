@@ -3,6 +3,8 @@ package com.ecoguard.ecoguard.config;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
@@ -15,13 +17,15 @@ import java.io.InputStream;
 @Configuration
 public class FirebaseConfig {
 
+    private static final Logger logger = LoggerFactory.getLogger(FirebaseConfig.class);
+
     @PostConstruct
     public void initialize() {
         try (InputStream serviceAccount = getClass().getClassLoader()
                 .getResourceAsStream("service-account-key.json")) {
 
             if (serviceAccount == null) {
-                System.err.println("Firebase service-account-key.json not found; push will be disabled.");
+                logger.warn("Firebase service-account-key.json not found; push will be disabled.");
                 return;
             }
 
@@ -31,10 +35,10 @@ public class FirebaseConfig {
 
             if (FirebaseApp.getApps().isEmpty()) {
                 FirebaseApp.initializeApp(options);
-                System.out.println("Firebase initialized for push notifications.");
+                logger.info("Firebase initialized for push notifications.");
             }
         } catch (Exception e) {
-            System.err.println("Firebase initialization failed: " + e.getMessage());
+            logger.error("Firebase initialization failed", e);
         }
     }
 }

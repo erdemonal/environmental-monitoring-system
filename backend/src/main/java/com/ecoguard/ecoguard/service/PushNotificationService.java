@@ -3,6 +3,8 @@ package com.ecoguard.ecoguard.service;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class PushNotificationService {
+
+    private static final Logger logger = LoggerFactory.getLogger(PushNotificationService.class);
 
     /**
      * Sends a basic notification (title + body) to the given device token.
@@ -34,12 +38,11 @@ public class PushNotificationService {
                 .build();
 
         try {
-            System.out.println("[FCM] Sending push to token=" + deviceToken + " title=" + title + " body=" + body);
+            logger.debug("Sending push notification to token={}, title={}, body={}", deviceToken, title, body);
             String response = FirebaseMessaging.getInstance().send(message);
-            System.out.println("[FCM] Successfully sent message: " + response);
+            logger.info("Successfully sent push notification: {}", response);
         } catch (Exception e) {
-            System.err.println("[FCM] Failed to send push notification to token " + deviceToken + ": " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Failed to send push notification to token {}", deviceToken, e);
         }
     }
 }
