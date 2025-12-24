@@ -171,7 +171,6 @@ class MainActivity : AppCompatActivity() {
                     .setTitle("Recent Alerts (${alerts.size})")
                     .setMessage(alertMessages)
                     .setPositiveButton("OK") { _, _ ->
-                        // Acknowledge all alerts
                         acknowledgeAllAlerts(alerts.map { it.id })
                     }
                     .setNeutralButton("View Thresholds") { _, _ ->

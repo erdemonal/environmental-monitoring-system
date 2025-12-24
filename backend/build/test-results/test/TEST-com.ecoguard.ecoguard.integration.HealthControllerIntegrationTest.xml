@@ -1,0 +1,8679 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.ecoguard.ecoguard.integration.HealthControllerIntegrationTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2025-12-24T06:49:06.603Z" hostname="ERDEM" time="2.682">
+  <properties/>
+  <testcase name="testHealth_WithData()" classname="com.ecoguard.ecoguard.integration.HealthControllerIntegrationTest" time="2.012"/>
+  <testcase name="testHealth_EmptyDatabase()" classname="com.ecoguard.ecoguard.integration.HealthControllerIntegrationTest" time="0.371"/>
+  <testcase name="testHealth_ResponseStructure()" classname="com.ecoguard.ecoguard.integration.HealthControllerIntegrationTest" time="0.294"/>
+  <system-out><![CDATA[Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
+07:48:56.092 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.ecoguard.ecoguard.integration.HealthControllerIntegrationTest]: HealthControllerIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+07:48:56.340 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.ecoguard.ecoguard.EcoguardApplication for test class com.ecoguard.ecoguard.integration.HealthControllerIntegrationTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::               (v3.4.10)
+
+2025-12-24T07:48:57.198+01:00  INFO 20360 --- [ecoguard] [    Test worker] c.e.e.i.HealthControllerIntegrationTest  : Starting HealthControllerIntegrationTest using Java 21.0.8 with PID 20360 (started by erdem in C:\Users\erdem\Desktop\EcoGuard\backend)
+2025-12-24T07:48:57.200+01:00  INFO 20360 --- [ecoguard] [    Test worker] c.e.e.i.HealthControllerIntegrationTest  : No active profile set, falling back to 1 default profile: "default"
+2025-12-24T07:48:58.452+01:00  INFO 20360 --- [ecoguard] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-24T07:48:58.631+01:00  INFO 20360 --- [ecoguard] [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 116 ms. Found 8 JPA repository interfaces.
+2025-12-24T07:48:59.840+01:00  INFO 20360 --- [ecoguard] [    Test worker] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-24T07:48:59.957+01:00  INFO 20360 --- [ecoguard] [    Test worker] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.29.Final
+2025-12-24T07:49:00.013+01:00  INFO 20360 --- [ecoguard] [    Test worker] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-12-24T07:49:00.648+01:00  INFO 20360 --- [ecoguard] [    Test worker] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-24T07:49:00.694+01:00  INFO 20360 --- [ecoguard] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-12-24T07:49:01.046+01:00  INFO 20360 --- [ecoguard] [    Test worker] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:file:./data/ecoguard-db user=SA
+2025-12-24T07:49:01.048+01:00  INFO 20360 --- [ecoguard] [    Test worker] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-12-24T07:49:01.085+01:00  WARN 20360 --- [ecoguard] [    Test worker] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-24T07:49:01.110+01:00  INFO 20360 --- [ecoguard] [    Test worker] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 2.3.232
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-24T07:49:02.484+01:00  INFO 20360 --- [ecoguard] [    Test worker] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-24T07:49:02.587+01:00  INFO 20360 --- [ecoguard] [    Test worker] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+Firebase initialized for push notifications.
+2025-12-24T07:49:04.480+01:00  WARN 20360 --- [ecoguard] [    Test worker] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-24T07:49:05.708+01:00  INFO 20360 --- [ecoguard] [    Test worker] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:file:./data/ecoguard-db'
+2025-12-24T07:49:05.820+01:00  INFO 20360 --- [ecoguard] [    Test worker] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2025-12-24T07:49:05.821+01:00  INFO 20360 --- [ecoguard] [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2025-12-24T07:49:05.825+01:00  INFO 20360 --- [ecoguard] [    Test worker] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 2 ms
+2025-12-24T07:49:05.878+01:00  INFO 20360 --- [ecoguard] [    Test worker] c.e.e.i.HealthControllerIntegrationTest  : Started HealthControllerIntegrationTest in 9.28 seconds (process running for 11.496)
+Hibernate: 
+    select
+        u1_0."user_id",
+        u1_0."created_at",
+        u1_0."device_token",
+        u1_0."password_hash",
+        u1_0."role",
+        u1_0."username" 
+    from
+        "users" u1_0 
+    where
+        u1_0."username"=?
+Hibernate: 
+    select
+        u1_0."user_id",
+        u1_0."created_at",
+        u1_0."device_token",
+        u1_0."password_hash",
+        u1_0."role",
+        u1_0."username" 
+    from
+        "users" u1_0 
+    where
+        u1_0."username"=?
+Hibernate: 
+    select
+        u1_0."user_id",
+        u1_0."created_at",
+        u1_0."device_token",
+        u1_0."password_hash",
+        u1_0."role",
+        u1_0."username" 
+    from
+        "users" u1_0 
+    where
+        u1_0."username"=?
+Hibernate: 
+    select
+        u1_0."user_id",
+        u1_0."created_at",
+        u1_0."device_token",
+        u1_0."password_hash",
+        u1_0."role",
+        u1_0."username" 
+    from
+        "users" u1_0 
+    where
+        u1_0."username"=?
+Hibernate: 
+    select
+        u1_0."user_id",
+        u1_0."created_at",
+        u1_0."device_token",
+        u1_0."password_hash",
+        u1_0."role",
+        u1_0."username" 
+    from
+        "users" u1_0 
+    where
+        u1_0."username"=?
+Hibernate: 
+    select
+        t1_0."threshold_id",
+        t1_0."max_value",
+        t1_0."metric_type",
+        t1_0."min_value" 
+    from
+        "thresholds" t1_0 
+    where
+        t1_0."metric_type"=?
+Hibernate: 
+    select
+        t1_0."threshold_id",
+        t1_0."max_value",
+        t1_0."metric_type",
+        t1_0."min_value" 
+    from
+        "thresholds" t1_0 
+    where
+        t1_0."metric_type"=?
+Hibernate: 
+    select
+        t1_0."threshold_id",
+        t1_0."max_value",
+        t1_0."metric_type",
+        t1_0."min_value" 
+    from
+        "thresholds" t1_0 
+    where
+        t1_0."metric_type"=?
+Hibernate: 
+    select
+        t1_0."threshold_id",
+        t1_0."max_value",
+        t1_0."metric_type",
+        t1_0."min_value" 
+    from
+        "thresholds" t1_0 
+    where
+        t1_0."metric_type"=?
+Hibernate: 
+    select
+        sd1_0."reading_id",
+        sd1_0."co2_level",
+        sd1_0."humidity",
+        sd1_0."light_level",
+        sd1_0."temperature",
+        sd1_0."timestamp" 
+    from
+        "sensor_data" sd1_0
+Hibernate: 
+    select
+        u1_0."user_id",
+        u1_0."created_at",
+        u1_0."device_token",
+        u1_0."password_hash",
+        u1_0."role",
+        u1_0."username" 
+    from
+        "users" u1_0
+Hibernate: 
+    insert 
+    into
+        "users"
+        ("created_at", "device_token", "password_hash", "role", "username", "user_id") 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "users" 
+    where
+        "user_id"=?
+Hibernate: 
+    delete 
+    from
+        "users" 
+    where
+        "user_id"=?
+Hibernate: 
+    delete 
+    from
+        "users" 
+    where
+        "user_id"=?
+Hibernate: 
+    delete 
+    from
+        "users" 
+    where
+        "user_id"=?
+Hibernate: 
+    delete 
+    from
+        "users" 
+    where
+        "user_id"=?
+Hibernate: 
+    select
+        u1_0."user_id",
+        u1_0."created_at",
+        u1_0."device_token",
+        u1_0."password_hash",
+        u1_0."role",
+        u1_0."username" 
+    from
+        "users" u1_0 
+    where
+        u1_0."username"=?
+Hibernate: 
+    insert 
+    into
+        "sensor_data"
+        ("co2_level", "humidity", "light_level", "temperature", "timestamp", "reading_id") 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    insert 
+    into
+        "sensor_data"
+        ("co2_level", "humidity", "light_level", "temperature", "timestamp", "reading_id") 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    select
+        count(*) 
+    from
+        "sensor_data" sd1_0
+Hibernate: 
+    select
+        sd1_0."reading_id",
+        sd1_0."co2_level",
+        sd1_0."humidity",
+        sd1_0."light_level",
+        sd1_0."temperature",
+        sd1_0."timestamp" 
+    from
+        "sensor_data" sd1_0
+Hibernate: 
+    select
+        u1_0."user_id",
+        u1_0."created_at",
+        u1_0."device_token",
+        u1_0."password_hash",
+        u1_0."role",
+        u1_0."username" 
+    from
+        "users" u1_0
+Hibernate: 
+    insert 
+    into
+        "users"
+        ("created_at", "device_token", "password_hash", "role", "username", "user_id") 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "users" 
+    where
+        "user_id"=?
+Hibernate: 
+    delete 
+    from
+        "users" 
+    where
+        "user_id"=?
+Hibernate: 
+    delete 
+    from
+        "users" 
+    where
+        "user_id"=?
+Hibernate: 
+    delete 
+    from
+        "users" 
+    where
+        "user_id"=?
+Hibernate: 
+    delete 
+    from
+        "users" 
+    where
+        "user_id"=?
+Hibernate: 
+    select
+        u1_0."user_id",
+        u1_0."created_at",
+        u1_0."device_token",
+        u1_0."password_hash",
+        u1_0."role",
+        u1_0."username" 
+    from
+        "users" u1_0 
+    where
+        u1_0."username"=?
+Hibernate: 
+    select
+        count(*) 
+    from
+        "sensor_data" sd1_0
+Hibernate: 
+    select
+        sd1_0."reading_id",
+        sd1_0."co2_level",
+        sd1_0."humidity",
+        sd1_0."light_level",
+        sd1_0."temperature",
+        sd1_0."timestamp" 
+    from
+        "sensor_data" sd1_0
+Hibernate: 
+    select
+        u1_0."user_id",
+        u1_0."created_at",
+        u1_0."device_token",
+        u1_0."password_hash",
+        u1_0."role",
+        u1_0."username" 
+    from
+        "users" u1_0
+Hibernate: 
+    insert 
+    into
+        "users"
+        ("created_at", "device_token", "password_hash", "role", "username", "user_id") 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "sensor_data" 
+    where
+        "reading_id"=?
+Hibernate: 
+    delete 
+    from
+        "users" 
+    where
+        "user_id"=?
+Hibernate: 
+    delete 
+    from
+        "users" 
+    where
+        "user_id"=?
+Hibernate: 
+    delete 
+    from
+        "users" 
+    where
+        "user_id"=?
+Hibernate: 
+    delete 
+    from
+        "users" 
+    where
+        "user_id"=?
+Hibernate: 
+    delete 
+    from
+        "users" 
+    where
+        "user_id"=?
+Hibernate: 
+    select
+        u1_0."user_id",
+        u1_0."created_at",
+        u1_0."device_token",
+        u1_0."password_hash",
+        u1_0."role",
+        u1_0."username" 
+    from
+        "users" u1_0 
+    where
+        u1_0."username"=?
+Hibernate: 
+    insert 
+    into
+        "sensor_data"
+        ("co2_level", "humidity", "light_level", "temperature", "timestamp", "reading_id") 
+    values
+        (?, ?, ?, ?, ?, default)
+Hibernate: 
+    select
+        count(*) 
+    from
+        "sensor_data" sd1_0
+]]></system-out>
+  <system-err><![CDATA[Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (C:\Users\erdem\.gradle\caches\modules-2\files-2.1\net.bytebuddy\byte-buddy-agent\1.15.11\a38b16385e867f59a641330f0362ebe742788ed8\byte-buddy-agent-1.15.11.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+]]></system-err>
+</testsuite>

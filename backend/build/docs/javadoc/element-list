@@ -1,0 +1,7 @@
+com.ecoguard.ecoguard
+com.ecoguard.ecoguard.config
+com.ecoguard.ecoguard.controller
+com.ecoguard.ecoguard.dto
+com.ecoguard.ecoguard.entity
+com.ecoguard.ecoguard.repository
+com.ecoguard.ecoguard.service

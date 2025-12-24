@@ -41,8 +41,22 @@ public class HealthController {
      * Returns the application status (always "UP" if endpoint is reachable),
      * current server time, and database status with sensor data row count.
      * If database access fails, the db status is set to "DOWN" with error details.
+     * <p>
+     * Requires authentication via Bearer token in the Authorization header.
+     * The endpoint is protected by AuthInterceptor and requires a valid session token.
      *
-     * @return ResponseEntity containing health status information
+     * @return ResponseEntity containing health status information with structure:
+     *         <ul>
+     *           <li>status: "UP" (always)</li>
+     *           <li>time: ISO-8601 timestamp string</li>
+     *           <li>db: object containing:
+     *             <ul>
+     *               <li>status: "UP" or "DOWN"</li>
+     *               <li>sensorDataCount: number of sensor data records (if status is "UP")</li>
+     *               <li>error: error class name (if status is "DOWN")</li>
+     *             </ul>
+     *           </li>
+     *         </ul>
      */
     @GetMapping
     public ResponseEntity<Map<String, Object>> health() {

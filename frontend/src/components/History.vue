@@ -45,6 +45,7 @@ function linePath(points, width, height, padding = 16) {
   return points.map((p, i) => `${i ? 'L' : 'M'}${mapX(new Date(p.timestamp).getTime())},${mapY(p.value)}`).join(' ')
 }
 
+
 async function load() {
   loading.value = true
   error.value = ''
