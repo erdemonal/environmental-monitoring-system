@@ -1,0 +1,9 @@
+javadoc/** linguist-vendored
+
+data/** linguist-documentation
+diagrams/** linguist-documentation
+
+frontend/dist/** linguist-vendored
+mobile/app/build/** linguist-vendored
+
+*.html linguist-vendored
