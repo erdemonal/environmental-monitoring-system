@@ -539,19 +539,19 @@ def handle_buttons():
         if time.ticks_diff(now, last_button_press["C"]) > BUTTON_DEBOUNCE_MS:
             last_button_press["C"] = now
             set_oled_override(display_admin_message, duration=4)
-def reinit_scd41():
+async def reinit_scd41():
     global scd4x
     if scd4x is None:
         return
     try:
         print("Reinitializing SCD41...")
         scd4x.stop_periodic_measurement()
-        time.sleep(1)
+        await asyncio.sleep(1)
     except Exception:
         pass
     try:
         scd4x.start_periodic_measurement()
-        time.sleep(3)
+        await asyncio.sleep(3)
         print("SCD41 reinit complete")
     except Exception as e:
         print("SCD41 reinit failed:", e)
@@ -1086,6 +1086,100 @@ def evaluate_thresholds(temp, hum, co2, light_level):
     
     return breaches
 
+async def main_loop():
+    """Main async loop for EcoGuard operation."""
+    global last_send, last_sensor_poll, not_ready_seconds
+    
+    # Initialize sensors
+    await init_all_sensors()
+    
+    print("Reading SCD41...")
+    last_send = 0
+    last_sensor_poll = 0
+    not_ready_seconds = 0
+
+    if scd4x is None:
+        print("ERROR: Sensor not initialized!")
+
+    while True:
+        try:
+            handle_buttons()
+            ensure_wifi()
+            now = time.time()
+            interval = BLE_COMMAND_CHECK_INTERVAL if ble_broadcasting else COMMAND_CHECK_INTERVAL
+            if wifi_ok and (now - last_command_check) >= interval:
+                if ble_broadcasting:
+                    fetch_ble_commands_only()
+                else:
+                    fetch_and_execute_commands()
+            if scd4x is None:
+                if oled is not None:
+                    oled.fill(0)
+                    oled.text("Sensor ERROR", 0, 10)
+                    oled.show()
+                await asyncio.sleep(5)
+                continue
+                
+            current_time = time.time()
+            if (current_time - last_sensor_poll) >= SCD41_READ_INTERVAL:
+                last_sensor_poll = current_time
+
+                if scd4x.data_ready:
+                    if not ble_broadcasting and wifi_ok and (current_time - last_threshold_fetch) >= THRESHOLD_REFRESH_INTERVAL:
+                        fetch_thresholds()
+                    if thresholds and thresholds != last_printed_thresholds:
+                        print("Thresholds changed:", format_thresholds(thresholds))
+                        last_printed_thresholds = dict(thresholds)
+
+                    co2, temp, hum = scd4x.measurement
+                    light_level = read_light()
+                    threshold_breaches = evaluate_thresholds(temp, hum, co2, light_level)
+                    not_ready_seconds = 0
+
+                    if threshold_breaches:
+                        set_led((255, 0, 0))
+                    else:
+                        set_led(DEFAULT_LED_COLOR)
+
+                    readings(co2, temp, hum, light_level, threshold_breaches)
+
+                    if ble_broadcasting:
+                        ble_update_metrics(co2, temp, hum, light_level)
+
+                    measurement_time = time.time()
+                    if not ble_broadcasting and wifi_ok and (measurement_time - last_send) >= SEND_INTERVAL:
+                        success = send_to_backend(co2, temp, hum, light_level)
+                        last_send = measurement_time
+                        if oled is not None and oled_override_until <= time.time():
+                            oled.fill(0)
+                            status_line = "OK" if success else "SEND ERR"
+                            if threshold_breaches:
+                                status_line = "ALRT {}".format(",".join(threshold_breaches)[:6])
+                            oled.text(status_line[:12], 0, 0)
+                            oled.text("T{} H{}".format(int(temp), int(hum))[:16], 0, 10)
+                            oled.text("C{} L{}".format(int(co2), light_level if light_level is not None else "-")[:16], 0, 20)
+                            oled.show()
+                else:
+                    if oled is not None:
+                        oled.fill(0)
+                        oled.text("Waiting...", 0, 10)
+                        oled.show()
+                    not_ready_seconds += SCD41_READ_INTERVAL
+                    if not_ready_seconds >= SCD41_REINIT_TIMEOUT:
+                        await reinit_scd41()
+                        not_ready_seconds = 0
+        except Exception as e:
+            if oled is not None:
+                oled.fill(0)
+                oled.text("Sensor ERROR", 0, 10)
+                oled.show()
+            print("Sensor error:", e)
+            await asyncio.sleep(5)
+            await reinit_scd41()
+            not_ready_seconds = 0
+
+        await asyncio.sleep(LOOP_DELAY)
+
 print("Starting EcoGuard...")
 
 ensure_credentials()
@@ -1096,91 +1190,4 @@ if not wifi_ok:
 else:
     fetch_thresholds()
 
-asyncio.run(init_all_sensors())
-
-print("Reading SCD41...")
-last_send = 0
-last_sensor_poll = 0
-not_ready_seconds = 0
-
-if scd4x is None:
-    print("ERROR: Sensor not initialized!")
-
-while True:
-    try:
-        handle_buttons()
-        ensure_wifi()
-        now = time.time()
-        interval = BLE_COMMAND_CHECK_INTERVAL if ble_broadcasting else COMMAND_CHECK_INTERVAL
-        if wifi_ok and (now - last_command_check) >= interval:
-            if ble_broadcasting:
-                fetch_ble_commands_only()
-            else:
-                fetch_and_execute_commands()
-        if scd4x is None:
-            if oled is not None:
-                oled.fill(0)
-                oled.text("Sensor ERROR", 0, 10)
-                oled.show()
-            time.sleep(5)
-            continue
-            
-        current_time = time.time()
-        if (current_time - last_sensor_poll) >= SCD41_READ_INTERVAL:
-            last_sensor_poll = current_time
-
-            if scd4x.data_ready:
-                if not ble_broadcasting and wifi_ok and (current_time - last_threshold_fetch) >= THRESHOLD_REFRESH_INTERVAL:
-                    fetch_thresholds()
-                if thresholds and thresholds != last_printed_thresholds:
-                    print("Thresholds changed:", format_thresholds(thresholds))
-                    last_printed_thresholds = dict(thresholds)
-
-                co2, temp, hum = scd4x.measurement
-                light_level = read_light()
-                threshold_breaches = evaluate_thresholds(temp, hum, co2, light_level)
-                not_ready_seconds = 0
-
-                if threshold_breaches:
-                    set_led((255, 0, 0))
-                else:
-                    set_led(DEFAULT_LED_COLOR)
-
-                readings(co2, temp, hum, light_level, threshold_breaches)
-
-                if ble_broadcasting:
-                    ble_update_metrics(co2, temp, hum, light_level)
-
-                measurement_time = time.time()
-                if not ble_broadcasting and wifi_ok and (measurement_time - last_send) >= SEND_INTERVAL:
-                    success = send_to_backend(co2, temp, hum, light_level)
-                    last_send = measurement_time
-                    if oled is not None and oled_override_until <= time.time():
-                        oled.fill(0)
-                        status_line = "OK" if success else "SEND ERR"
-                        if threshold_breaches:
-                            status_line = "ALRT {}".format(",".join(threshold_breaches)[:6])
-                        oled.text(status_line[:12], 0, 0)
-                        oled.text("T{} H{}".format(int(temp), int(hum))[:16], 0, 10)
-                        oled.text("C{} L{}".format(int(co2), light_level if light_level is not None else "-")[:16], 0, 20)
-                        oled.show()
-            else:
-                if oled is not None:
-                    oled.fill(0)
-                    oled.text("Waiting...", 0, 10)
-                    oled.show()
-                not_ready_seconds += SCD41_READ_INTERVAL
-                if not_ready_seconds >= SCD41_REINIT_TIMEOUT:
-                    reinit_scd41()
-                    not_ready_seconds = 0
-    except Exception as e:
-        if oled is not None:
-            oled.fill(0)
-            oled.text("Sensor ERROR", 0, 10)
-            oled.show()
-        print("Sensor error:", e)
-        time.sleep(5)
-        reinit_scd41()
-        not_ready_seconds = 0
-
-    time.sleep(LOOP_DELAY)
+asyncio.run(main_loop())
