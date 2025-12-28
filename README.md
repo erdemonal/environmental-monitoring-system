@@ -7,7 +7,7 @@ Environmental monitoring system with ESP32, Spring Boot backend, Vue.js frontend
 Clone the repository:
 
 ```bash
-git clone https://github.com/erdemonal11/EcoGuard.git
+git clone https://github.com/erdemonal/EcoGuard.git
 cd EcoGuard
 ```
 
