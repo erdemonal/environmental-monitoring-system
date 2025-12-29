@@ -2,7 +2,7 @@ from machine import Pin, I2C, ADC
 import time
 import network
 import json
-import asyncio
+import uasyncio as asyncio
 import gc
 from scd4x import SCD4X
 from ssd1306 import SSD1306_I2C
@@ -26,7 +26,6 @@ RGB_PIN = 5
 RGB_LED_COUNT = 1
 SEND_INTERVAL = 5
 THRESHOLD_REFRESH_INTERVAL = 10
-LOOP_DELAY = 0.05  
 SCD41_READ_INTERVAL = 10
 BUTTON_A_PIN = 15
 BUTTON_B_PIN = 32
@@ -35,9 +34,12 @@ BUTTON_DEBOUNCE_MS = 80
 BASE_URL = None
 THRESHOLD_URL = None
 COMMAND_URL = None
+BACKEND_URL = None
 COMMAND_CHECK_INTERVAL = 10
-BLE_COMMAND_CHECK_INTERVAL = 15  
+BLE_COMMAND_CHECK_INTERVAL = 15
 SCD41_REINIT_TIMEOUT = 30
+THRESHOLD_ALERT_COOLDOWN = 300
+
 i2c = I2C(0, scl=Pin(22, Pin.PULL_UP), sda=Pin(23, Pin.PULL_UP), freq=50000)
 time.sleep(1)
 
@@ -46,7 +48,38 @@ oled = None
 light_sensor = None
 np = None
 last_light_color = (0, 0, 0)
+ble = None
+ble_broadcasting = False
+BLE_NAME = "EG"
+last_ble_update = 0
+BLE_UPDATE_INTERVAL = 2
+last_ble_data = None
+wifi_ok = False
+thresholds = {}
+last_printed_thresholds = None
+last_threshold_fetch = 0
+current_ip = None
+last_admin_message = "No admin message"
+oled_override_until = 0
+DEFAULT_LED_COLOR = (0, 255, 0)
+last_command_check = 0
+last_threshold_alert_time = {}
 
+sensor_data = {
+    'co2': None,
+    'temp': None,
+    'hum': None,
+    'light': None,
+    'breaches': []
+}
+
+button_a = None
+button_b = None
+button_c = None
+last_button_press = {"A": 0, "B": 0, "C": 0}
+last_send = 0
+last_sensor_poll = 0
+not_ready_seconds = 0
 
 def load_stored_credentials():
     try:
@@ -58,70 +91,54 @@ def load_stored_credentials():
     except Exception:
         return None
 
-
 def save_stored_credentials(creds):
     try:
         with open(CONFIG_FILE, "w") as fp:
             fp.write(json.dumps(creds))
-        print("Credentials saved to storage")
+        print("Credentials saved")
         return True
     except Exception as e:
-        print("Failed to save credentials:", e)
+        print("Save error:", e)
         return False
-
 
 def apply_credentials(creds):
     global WIFI_SSID, WIFI_PASSWORD, BACKEND_IP, DEVICE_KEY
     global BASE_URL, THRESHOLD_URL, COMMAND_URL, BACKEND_URL
-
     WIFI_SSID = creds.get("ssid") or ""
     WIFI_PASSWORD = creds.get("password") or ""
     BACKEND_IP = creds.get("backend_ip") or ""
     DEVICE_KEY = creds.get("device_key") or ""
-
     BASE_URL = "http://{}:8080".format(BACKEND_IP)
     THRESHOLD_URL = BASE_URL + "/api/device/thresholds"
     COMMAND_URL = BASE_URL + "/api/device/commands"
     BACKEND_URL = BASE_URL + "/api/device/sensor-data"
 
-
 def _prov_adv_payload(name):
     name_bytes = name.encode("utf-8")
     return bytes(bytearray([len(name_bytes) + 1, 0x09]) + name_bytes)
 
-
 def provision_via_ble():
-    print("No stored credentials, entering BLE provisioning mode...")
+    print("BLE provisioning mode...")
     prov_ble = ubluetooth.BLE()
     prov_ble.active(True)
     try:
         prov_ble.config(gap_name=PROV_DEVICE_NAME)
     except Exception:
         pass
-
-    creds_char = (
-        PROV_CHAR_UUID,
-        ubluetooth.FLAG_WRITE | ubluetooth.FLAG_WRITE_NO_RESPONSE | ubluetooth.FLAG_READ
-    )
+    creds_char = (PROV_CHAR_UUID, ubluetooth.FLAG_WRITE | ubluetooth.FLAG_WRITE_NO_RESPONSE | ubluetooth.FLAG_READ)
     prov_service = (PROV_SERVICE_UUID, (creds_char,))
     ((creds_handle,),) = prov_ble.gatts_register_services((prov_service,))
     try:
         prov_ble.gatts_set_buffer(creds_handle, 256, True)
     except Exception:
         pass
-    print("Prov service:", PROV_SERVICE_UUID)
-    print("Prov char:", PROV_CHAR_UUID, "handle:", creds_handle)
-
     state = {"data": None}
     connected = {"active": False}
-
     if oled is not None:
         oled.fill(0)
         oled.text("BLE Setup", 0, 0)
-        oled.text("Use app to", 0, 10)
-        oled.text("send creds", 0, 20)
+        oled.text("Use app", 0, 10)
         oled.show()
-
     def _irq(event, data):
         if event == _IRQ_GATTS_WRITE:
             conn_handle, attr_handle = data
@@ -134,28 +151,27 @@ def provision_via_ble():
                 required = ("ssid", "password", "backend_ip", "device_key")
                 if all(creds.get(k) for k in required):
                     state["data"] = creds
-                    print("Credentials received via BLE")
-                else:
-                    print("Provision payload missing fields")
+                    print("Credentials received")
             except Exception as e:
-                print("Provision parse error:", e)
+                print("Parse error:", e)
         elif event == _IRQ_CENTRAL_CONNECT:
             connected["active"] = True
-            print("Provision client connected")
+            print("Client connected")
         elif event == _IRQ_CENTRAL_DISCONNECT:
             connected["active"] = False
-            print("Provision client disconnected")
             if state["data"] is None:
                 try:
                     prov_ble.gap_advertise(250000, adv_data=adv, connectable=True)
-                except Exception as e:
-                    print("Resume advertise error:", e)
-
+                except Exception:
+                    pass
     prov_ble.irq(_irq)
     adv = _prov_adv_payload(PROV_DEVICE_NAME)
     prov_ble.gap_advertise(250000, adv_data=adv, connectable=True)
-
+    timeout = 300
+    start = time.time()
     while state["data"] is None:
+        if time.time() - start > timeout:
+            raise TimeoutError("Provisioning timeout")
         time.sleep(0.2)
         gc.collect()
         if not connected["active"]:
@@ -163,23 +179,19 @@ def provision_via_ble():
                 prov_ble.gap_advertise(250000, adv_data=adv, connectable=True)
             except OSError:
                 pass
-
     prov_ble.gap_advertise(None)
     prov_ble.active(False)
     if oled is not None:
         oled.fill(0)
         oled.text("BLE OK", 0, 0)
-        oled.text("Saving...", 0, 10)
         oled.show()
     return state["data"]
-
 
 def ensure_credentials():
     creds = load_stored_credentials()
     if creds:
         apply_credentials(creds)
         return True
-
     while True:
         try:
             new_creds = provision_via_ble()
@@ -189,14 +201,6 @@ def ensure_credentials():
         except Exception as e:
             print("Provisioning error:", e)
         time.sleep(1)
-
-
-ble = None
-ble_broadcasting = False
-BLE_NAME = "EG"  
-last_ble_update = 0
-BLE_UPDATE_INTERVAL = 2  
-last_ble_data = None  
 
 def set_led(color):
     global last_light_color
@@ -213,7 +217,6 @@ async def init_scd41():
     global scd4x
     try:
         devices = i2c.scan()
-        print("I2C devices:", [hex(d) for d in devices])
         if 0x62 in devices:
             scd4x = SCD4X(i2c)
             await asyncio.sleep(2)
@@ -224,12 +227,11 @@ async def init_scd41():
                 pass
             scd4x.start_periodic_measurement()
             await asyncio.sleep(3)
-            print("SCD41 initialized")
+            print("SCD41 OK")
         else:
-            print("ERROR: SCD41 not found on I2C bus!")
+            print("SCD41 not found")
     except Exception as e:
         print("Sensor init error:", e)
-        print("Continuing without sensor...")
         scd4x = None
 
 async def init_oled():
@@ -240,9 +242,9 @@ async def init_oled():
         oled.text("EcoGuard", 0, 0)
         oled.show()
         await asyncio.sleep(1)
-        print("OLED initialized")
+        print("OLED OK")
     except Exception as e:
-        print("OLED init error:", e)
+        print("OLED error:", e)
         oled = None
 
 async def init_light_sensor():
@@ -251,7 +253,7 @@ async def init_light_sensor():
         light_sensor = ADC(Pin(LIGHT_SENSOR_PIN))
         light_sensor.atten(ADC.ATTN_11DB)
         light_sensor.width(ADC.WIDTH_12BIT)
-        print("Light sensor initialized")
+        print("Light sensor OK")
     except Exception as e:
         print("Light sensor error:", e)
         light_sensor = None
@@ -261,18 +263,35 @@ async def init_rgb_led():
     try:
         np = neopixel.NeoPixel(Pin(RGB_PIN, Pin.OUT), RGB_LED_COUNT)
         set_led((0, 255, 0))
-        print("RGB LED initialized")
+        print("RGB LED OK")
     except Exception as e:
-        print("RGB LED init error:", e)
+        print("RGB LED error:", e)
         np = None
 
+def init_button(pin_number):
+    if pin_number is None:
+        return None
+    try:
+        return Pin(pin_number, Pin.IN, Pin.PULL_UP)
+    except Exception as e:
+        print("Button init error:", e)
+        return None
+
+async def init_buttons():
+    global button_a, button_b, button_c
+    button_a = init_button(BUTTON_A_PIN)
+    button_b = init_button(BUTTON_B_PIN)
+    button_c = init_button(BUTTON_C_PIN)
+    await asyncio.sleep(0.1)
+
 async def init_all_sensors():
-    print("Initializing sensors...")
+    print("Init sensors...")
     await asyncio.gather(
         init_scd41(),
         init_oled(),
         init_light_sensor(),
-        init_rgb_led()
+        init_rgb_led(),
+        init_buttons()
     )
 
 def init_ble():
@@ -280,42 +299,33 @@ def init_ble():
     try:
         gc.collect()
         time.sleep(0.1)
-        
         ble = ubluetooth.BLE()
         ble.active(True)
-        
         gc.collect()
         time.sleep(0.2)
-        
-        print("BLE initialized")
+        print("BLE OK")
         return True
     except Exception as e:
-        print("BLE init error:", e)
+        print("BLE error:", e)
         return False
 
 def ble_adv_payload(name, co2, temp, hum, light):
     try:
         name_bytes = name.encode('utf-8')
         name_len = len(name_bytes)
-        
         co2_val = int(co2) if co2 is not None else 0
         temp_val = round(temp, 1) if temp is not None else 0.0
         hum_val = round(hum, 1) if hum is not None else 0.0
         light_val = int(light) if light is not None else 0
-        
         data_str = "c{}t{}h{}l{}".format(co2_val, temp_val, hum_val, light_val)
         data_bytes = data_str.encode('utf-8')
         data_len = len(data_bytes)
-        
         name_overhead = name_len + 2
         payload = bytearray([name_len + 1, 0x09]) + name_bytes
-
         manufacturer_overhead = 4
         remaining = 31 - name_overhead
-        
         if data_len + manufacturer_overhead <= remaining:
             payload += bytearray([data_len + 3, 0xFF, 0xFF, 0xFF]) + data_bytes
-        
         return bytes(payload)
     except Exception as e:
         print("BLE payload error:", e)
@@ -326,24 +336,18 @@ def ble_start_broadcast():
     if ble is None:
         if not init_ble():
             return False
-    
     gc.collect()
     time.sleep(0.1)
-    
     try:
         try:
             ble.active(True)
         except:
             pass
-        
         ble_broadcasting = True
-        
         payload = ble_adv_payload(BLE_NAME, 0, 0.0, 0.0, 0)
         if payload:
-            ble.gap_advertise(500, adv_data=payload, connectable=False)  
-        
+            ble.gap_advertise(500, adv_data=payload, connectable=False)
         gc.collect()
-        
         print("BLE broadcast started")
         return True
     except Exception as e:
@@ -357,10 +361,8 @@ def ble_stop_broadcast():
         if ble is not None:
             ble.gap_advertise(None)
         ble_broadcasting = False
-        
         gc.collect()
         time.sleep(0.1)
-        
         print("BLE broadcast stopped")
         return True
     except Exception as e:
@@ -369,75 +371,37 @@ def ble_stop_broadcast():
         return False
 
 def ble_update_metrics(co2, temp, hum, light):
-    global ble, ble_broadcasting, last_ble_update, last_ble_data, last_command_check
+    global ble, ble_broadcasting, last_ble_update, last_ble_data
     if not ble_broadcasting or ble is None:
         return
-    
     current_time = time.time()
     if (current_time - last_ble_update) < BLE_UPDATE_INTERVAL:
         return
-    
     try:
         gc.collect()
-        
         current_data = (
             int(co2) if co2 is not None else 0,
             round(temp, 1) if temp is not None else 0.0,
             round(hum, 1) if hum is not None else 0.0,
             int(light) if light is not None else 0
         )
-        
         if last_ble_data == current_data:
             return
-        
         payload = ble_adv_payload(BLE_NAME, co2, temp, hum, light)
         if payload:
-            ble.gap_advertise(500, adv_data=payload, connectable=False)  
+            ble.gap_advertise(500, adv_data=payload, connectable=False)
             last_ble_update = current_time
             last_ble_data = current_data
-            
             gc.collect()
     except Exception as e:
         print("BLE update error:", e)
         gc.collect()
 
-wifi_ok = False
-thresholds = {}
-last_printed_thresholds = None
-last_threshold_fetch = 0
-current_ip = None
-last_admin_message = "No admin message"
-oled_override_until = 0
-DEFAULT_LED_COLOR = (0, 255, 0)
-
 def format_thresholds(data):
     parts = []
     for metric, values in data.items():
-        parts.append("{}(min={}, max={})".format(
-            metric,
-            values.get("min", "-"),
-            values.get("max", "-")
-        ))
+        parts.append("{}(min={}, max={})".format(metric, values.get("min", "-"), values.get("max", "-")))
     return ", ".join(parts) if parts else "None"
-
-def light_to_color(light_value):
-    if light_value is None:
-        return (0, 0, 40)
-    bucket = max(0, min(4000, int(light_value)))
-    step = bucket // 100  
-    ratio = step / 40
-    ratio = max(0.0, min(1.0, ratio))
-    if ratio <= 0.5:
-        blend = ratio / 0.5
-        r = 0
-        g = int(80 + 150 * blend)
-        b = int(220 - 140 * blend)
-    else:
-        blend = (ratio - 0.5) / 0.5
-        r = int(60 + 195 * blend)
-        g = int(230 - 180 * blend)
-        b = 0
-    return (min(max(r, 0), 255), min(max(g, 0), 255), min(max(b, 0), 255))
 
 def flash_led(color, flashes=3, delay=0.18):
     global last_light_color
@@ -479,7 +443,6 @@ def display_thresholds_info():
         return
     oled.fill(0)
     oled.text("THR", 0, 0)
-
     def fmt_range(metric):
         info = thresholds.get(metric)
         if not info:
@@ -487,12 +450,10 @@ def display_thresholds_info():
         min_v = "-" if info.get("min") is None else str(int(info["min"]))
         max_v = "-" if info.get("max") is None else str(int(info["max"]))
         return "{}-{}".format(min_v, max_v)
-
     t_txt = fmt_range("TEMP")
     h_txt = fmt_range("HUMIDITY")
     c_txt = fmt_range("CO2")
     l_txt = fmt_range("LIGHT")
-
     oled.text("T:{} H:{}".format(t_txt, h_txt)[:16], 0, 10)
     oled.text("C:{} L:{}".format(c_txt, l_txt)[:16], 0, 20)
     oled.show()
@@ -507,20 +468,6 @@ def display_admin_message():
     if len(msg) > 16:
         oled.text(msg[16:32], 0, 20)
     oled.show()
-
-def init_button(pin_number):
-    if pin_number is None:
-        return None
-    try:
-        return Pin(pin_number, Pin.IN, Pin.PULL_UP)
-    except Exception as e:
-        print("Button init error on pin {}: {}".format(pin_number, e))
-        return None
-
-button_a = init_button(BUTTON_A_PIN)
-button_b = init_button(BUTTON_B_PIN)
-button_c = init_button(BUTTON_C_PIN)
-last_button_press = {"A": 0, "B": 0, "C": 0}
 
 def button_pressed(btn):
     return btn is not None and btn.value() == 0
@@ -539,12 +486,13 @@ def handle_buttons():
         if time.ticks_diff(now, last_button_press["C"]) > BUTTON_DEBOUNCE_MS:
             last_button_press["C"] = now
             set_oled_override(display_admin_message, duration=4)
+
 async def reinit_scd41():
     global scd4x
     if scd4x is None:
         return
     try:
-        print("Reinitializing SCD41...")
+        print("Reinit SCD41...")
         scd4x.stop_periodic_measurement()
         await asyncio.sleep(1)
     except Exception:
@@ -552,11 +500,10 @@ async def reinit_scd41():
     try:
         scd4x.start_periodic_measurement()
         await asyncio.sleep(3)
-        print("SCD41 reinit complete")
+        print("SCD41 reinit OK")
     except Exception as e:
         print("SCD41 reinit failed:", e)
 
-BACKEND_URL = None
 def connect_wifi():
     global current_ip
     current_ip = None
@@ -565,42 +512,36 @@ def connect_wifi():
     time.sleep(0.5)
     wlan.active(True)
     time.sleep(1)
-    
     if not wlan.isconnected():
-        print("Connecting to WiFi: " + WIFI_SSID)
+        print("Connecting WiFi:", WIFI_SSID)
         if oled is not None:
             oled.fill(0)
             oled.text("WiFi...", 0, 0)
             oled.show()
-        
         try:
             wlan.disconnect()
             time.sleep(0.5)
         except:
             pass
-        
         wlan.connect(WIFI_SSID, WIFI_PASSWORD)
-        
         for i in range(20):
             if wlan.isconnected():
                 break
             time.sleep(1)
-            print(".", end="")
-        
         if wlan.isconnected():
             ip = wlan.ifconfig()[0]
             current_ip = ip
-            print("\nWiFi connected! IP: " + ip)
+            print("WiFi OK:", ip)
             if oled is not None:
                 oled.fill(0)
                 oled.text("WiFi OK", 0, 0)
-                oled.text("IP: " + ip[-9:], 0, 10)
+                oled.text("IP:" + ip[-9:], 0, 10)
                 oled.show()
             time.sleep(2)
             return True
         else:
             current_ip = None
-            print("\nWiFi connection failed!")
+            print("WiFi failed")
             if oled is not None:
                 oled.fill(0)
                 oled.text("WiFi ERROR", 0, 10)
@@ -608,14 +549,14 @@ def connect_wifi():
             return False
     else:
         current_ip = wlan.ifconfig()[0]
-        print("WiFi already connected. IP: " + current_ip)
+        print("WiFi connected:", current_ip)
         return True
 
 def ensure_wifi():
     global wifi_ok, current_ip
     wlan = network.WLAN(network.STA_IF)
     if not wlan.isconnected():
-        print("WiFi lost, reconnecting...")
+        print("WiFi reconnecting...")
         wifi_ok = connect_wifi()
     else:
         wifi_ok = True
@@ -627,69 +568,42 @@ def send_webhook_notification(alert_type, message, data=None):
         return False
     try:
         import urequests
-        payload = {
-            "alertType": alert_type,
-            "message": message,
-            "timestamp": time.time()
-        }
+        payload = {"alertType": alert_type, "message": message, "timestamp": time.time()}
         if data:
             payload.update(data)
         json_data = json.dumps(payload)
         headers = {"Content-Type": "application/json"}
-        response = urequests.post(WEBHOOK_URL, data=json_data, headers=headers, timeout=3)
+        response = urequests.post(WEBHOOK_URL, data=json_data, headers=headers, timeout=2)
         response.close()
-        print("Webhook sent: " + alert_type)
+        print("Webhook sent")
         return True
     except Exception as e:
-        print("Webhook error: " + str(e))
+        print("Webhook error:", e)
         return False
 
 def send_to_backend(co2, temp, hum, light_level=None):
     if ble_broadcasting:
         return False
-    
     response = None
     gc.collect()
-    time.sleep(0.05)
     try:
         import urequests
-        
-        payload = {
-            "co2Level": int(co2),
-            "temperature": float(temp),
-            "humidity": float(hum)
-        }
+        payload = {"co2Level": int(co2), "temperature": float(temp), "humidity": float(hum)}
         if light_level is not None:
             payload["lightLevel"] = int(light_level)
-        
         json_data = json.dumps(payload)
-        headers = {
-            "Content-Type": "application/json",
-            "X-Device-Key": DEVICE_KEY
-        }
-        
-        print("Sending to backend...")
-        response = urequests.post(BACKEND_URL, data=json_data, headers=headers)
-        
+        headers = {"Content-Type": "application/json", "X-Device-Key": DEVICE_KEY}
+        response = urequests.post(BACKEND_URL, data=json_data, headers=headers, timeout=3)
         if response.status_code == 200:
             result = response.json()
-            print("Success! ID: " + str(result.get("sensorDataId", "?")))
+            print("Sent OK")
             return True
         else:
-            print("Error! Code: " + str(response.status_code))
+            print("Send error:", response.status_code)
             return False
-            
-    except ImportError:
-        print("urequests not installed")
-        return False
     except Exception as e:
-        error_code = str(e)
-        print("Error: " + error_code)
-        if "-203" in error_code or "ENOMEM" in error_code:
-            gc.collect()
-            time.sleep(0.2)
-            gc.collect()
-            time.sleep(0.1)
+        print("Send error:", e)
+        gc.collect()
         return False
     finally:
         if response:
@@ -710,10 +624,9 @@ def readings(co2, temp, hum, light_level, breach_metrics=None):
         oled.text("T{} H{}".format(int(temp), int(hum))[:16], 0, 10)
         oled.text("C{} L{}".format(int(co2), light_level if light_level is not None else "-")[:16], 0, 20)
         oled.show()
-    log_line = "CO2: {} ppm | Temp: {:.1f}C | Hum: {:.1f}% | Light: {}".format(
-        co2, temp, hum, light_level)
+    log_line = "CO2:{} T:{:.1f} H:{:.1f} L:{}".format(co2, temp, hum, light_level)
     if breach_metrics:
-        log_line = "{} | Breach: {}".format(log_line, ",".join(breach_metrics))
+        log_line += " | Breach:{}".format(",".join(breach_metrics))
     print(log_line)
 
 def read_light():
@@ -724,14 +637,12 @@ def read_light():
 def fetch_thresholds():
     if ble_broadcasting:
         return
-    
     global thresholds, last_threshold_fetch
     response = None
     gc.collect()
-    time.sleep(0.05)
     try:
         import urequests
-        response = urequests.get(THRESHOLD_URL, headers={"X-Device-Key": DEVICE_KEY})
+        response = urequests.get(THRESHOLD_URL, headers={"X-Device-Key": DEVICE_KEY}, timeout=3)
         if response.status_code == 200:
             data = response.json()
             updated = {}
@@ -747,14 +658,9 @@ def fetch_thresholds():
                 }
             thresholds = updated
             last_threshold_fetch = time.time()
-        else:
-            print("Failed to fetch thresholds:", response.status_code)
     except Exception as e:
-        error_code = str(e)
-        print("Threshold fetch error:", error_code)
-        if "-203" in error_code or "ENOMEM" in error_code:
-            gc.collect()
-            time.sleep(0.1)
+        print("Threshold fetch error:", e)
+        gc.collect()
     finally:
         if response:
             try:
@@ -763,8 +669,6 @@ def fetch_thresholds():
                 pass
         gc.collect()
 
-last_command_check = time.time()  
-
 def get_cmd_id(cmd):
     return cmd.get("id") or cmd.get("commandId") or cmd.get("commandID")
 
@@ -772,102 +676,62 @@ def ack_command(cmd_id):
     try:
         import urequests
         gc.collect()
-        free0 = gc.mem_free()
-        
         base = COMMAND_URL + "/" + str(cmd_id)
-        
-        tries = [
-            ("PUT",  base + "/ack"),
-            ("POST", base + "/ack"),
-            ("PUT",  COMMAND_URL + "?id=" + str(cmd_id) + "&ack=true"),
-            ("POST", COMMAND_URL + "/ack?id=" + str(cmd_id)),
-        ]
-        
+        tries = [("PUT", base + "/ack"), ("POST", base + "/ack")]
         for method, url in tries:
             try:
                 gc.collect()
-                free1 = gc.mem_free()
-                print("[ACK] try", method, url, "free", free1)
-                
                 if method == "PUT":
-                    r = urequests.put(url, headers={"X-Device-Key": DEVICE_KEY})
+                    r = urequests.put(url, headers={"X-Device-Key": DEVICE_KEY}, timeout=2)
                 else:
-                    r = urequests.post(url, headers={"X-Device-Key": DEVICE_KEY})
-                
-                print("[ACK] resp", r.status_code)
+                    r = urequests.post(url, headers={"X-Device-Key": DEVICE_KEY}, timeout=2)
                 r.close()
-                
                 if r.status_code in (200, 204):
-                    print("[ACK] OK", cmd_id, "free now", gc.mem_free())
                     gc.collect()
                     return True
-            except Exception as e:
-                print("[ACK] fail", method, "->", e)
+            except Exception:
                 gc.collect()
-        
-        print("[ACK] all tries failed for", cmd_id, "free delta", free0 - gc.mem_free())
         return False
-    
     except Exception as e:
-        print("[ACK] total error", e)
+        print("ACK error:", e)
         gc.collect()
         return False
 
 def fetch_ble_commands_only():
     global last_command_check, ble_broadcasting, last_ble_data
-    
     if not wifi_ok:
         return
-    
     try:
         if ble is not None:
             try:
                 ble.gap_advertise(None)
-            except:
-                pass
-            try:
-                ble.active(False)   
+                ble.active(False)
             except:
                 pass
         gc.collect()
         time.sleep(0.3)
-        gc.collect()
     except:
         pass
-    
     response = None
-    
     try:
         import urequests
         gc.collect()
-        
-        response = urequests.get(COMMAND_URL, headers={"X-Device-Key": DEVICE_KEY})
+        response = urequests.get(COMMAND_URL, headers={"X-Device-Key": DEVICE_KEY}, timeout=3)
         if response.status_code != 200:
             return
-        
         commands = response.json()
-        
         for cmd in commands:
             if cmd.get("commandType") != "BLE_BROADCAST":
                 continue
-            
-            print("RAW CMD OBJ:", cmd)
-            
             cmd_id = get_cmd_id(cmd)
             if cmd_id:
-                ack_command(cmd_id)   
-            
-            execute_command(cmd)      
-            
+                ack_command(cmd_id)
+            execute_command(cmd)
             gc.collect()
-            time.sleep(0.05)
-        
         last_command_check = time.time()
-    
     except Exception as e:
-        print("BLE-only cmd fetch error:", e)
+        print("BLE cmd fetch error:", e)
         gc.collect()
-    
     finally:
         if response:
             try:
@@ -875,23 +739,19 @@ def fetch_ble_commands_only():
             except:
                 pass
         gc.collect()
-        
         try:
             if ble is not None and ble_broadcasting:
                 try:
                     ble.active(True)
                 except:
                     pass
-                
                 if last_ble_data:
                     co2, temp, hum, light = last_ble_data
                 else:
                     co2, temp, hum, light = 0, 0.0, 0.0, 0
-                
                 payload = ble_adv_payload(BLE_NAME, co2, temp, hum, light)
                 if payload:
                     ble.gap_advertise(500, adv_data=payload, connectable=False)
-            
             gc.collect()
         except:
             pass
@@ -899,44 +759,28 @@ def fetch_ble_commands_only():
 def fetch_and_execute_commands():
     if ble_broadcasting:
         return
-    
     global last_command_check
     response = None
     gc.collect()
-    time.sleep(0.05)
-    
     try:
         import urequests
-        response = urequests.get(COMMAND_URL, headers={"X-Device-Key": DEVICE_KEY})
+        response = urequests.get(COMMAND_URL, headers={"X-Device-Key": DEVICE_KEY}, timeout=3)
         if response.status_code == 200:
             commands = response.json()
-            
             for cmd in commands:
-                print("RAW CMD OBJ:", cmd)
                 cmd_type = cmd.get("commandType")
                 cmd_id = get_cmd_id(cmd)
-                
                 pre_acked = False
                 if cmd_type == "BLE_BROADCAST" and cmd_id:
                     pre_acked = ack_command(cmd_id)
-                
                 execute_command(cmd)
-                
                 gc.collect()
-                time.sleep(0.05)
-                
                 if cmd_id and not pre_acked:
                     ack_command(cmd_id)
-        
         last_command_check = time.time()
-    
     except Exception as e:
-        error_code = str(e)
-        print("Command fetch error:", error_code)
-        if "-203" in error_code or "ENOMEM" in error_code:
-            gc.collect()
-            time.sleep(0.1)
-    
+        print("Command fetch error:", e)
+        gc.collect()
     finally:
         if response:
             try:
@@ -948,30 +792,21 @@ def fetch_and_execute_commands():
 def execute_command(cmd):
     cmd_type = cmd.get("commandType")
     params = cmd.get("parameters")
-    print("Executing command:", cmd_type, params)
-    
+    print("Exec cmd:", cmd_type, params)
     gc.collect()
-    
     if ble_broadcasting and cmd_type != "BLE_BROADCAST":
-        print("Skipping command (BLE active):", cmd_type)
         return
-    
     if cmd_type == "SET_LED_COLOR":
         try:
             if params:
                 parts = params.split(",")
                 if len(parts) == 3:
-                    r = int(parts[0].strip())
-                    g = int(parts[1].strip())
-                    b = int(parts[2].strip())
-                    r = max(0, min(r, 255))
-                    g = max(0, min(g, 255))
-                    b = max(0, min(b, 255))
+                    r = max(0, min(int(parts[0].strip()), 255))
+                    g = max(0, min(int(parts[1].strip()), 255))
+                    b = max(0, min(int(parts[2].strip()), 255))
                     flash_led((r, g, b))
-                    print("LED flash color:", r, g, b)
         except Exception as e:
-            print("LED command error:", e)
-    
+            print("LED cmd error:", e)
     elif cmd_type == "DISPLAY_MESSAGE":
         global last_admin_message
         if params:
@@ -984,22 +819,11 @@ def execute_command(cmd):
                     oled.text(params[16:32], 0, 10)
                 oled.show()
                 set_oled_override(display_admin_message, duration=4)
-                print("Display message:", params)
             except Exception as e:
                 print("Display error:", e)
-    
     elif cmd_type == "REFRESH_CONFIG":
-        if params:
-            print("Config refresh requested:", params)
         if not ble_broadcasting and wifi_ok:
             fetch_thresholds()
-            if params:
-                print("Config refreshed -", params)
-            else:
-                print("Config refreshed")
-        elif ble_broadcasting:
-            print("Config refresh skipped (BLE active)")
-    
     elif cmd_type == "BLE_BROADCAST":
         if params:
             params_lower = params.lower().strip()
@@ -1012,17 +836,13 @@ def execute_command(cmd):
                     ble_stop_broadcast()
                 else:
                     ble_start_broadcast()
-            else:
-                print("BLE_BROADCAST: invalid parameter, use 'start', 'stop', or 'toggle'")
         else:
             if ble_broadcasting:
                 ble_stop_broadcast()
             else:
                 ble_start_broadcast()
-        
         gc.collect()
         time.sleep(0.3)
-        gc.collect()  
 
 def is_metric_outside(metric, value):
     info = thresholds.get(metric)
@@ -1036,158 +856,170 @@ def is_metric_outside(metric, value):
         return True
     return False
 
-last_threshold_alert_time = {}
-THRESHOLD_ALERT_COOLDOWN = 300
-
 def evaluate_thresholds(temp, hum, co2, light_level):
     global last_threshold_alert_time
     breaches = []
     current_time = time.time()
-    
     if is_metric_outside("TEMP", temp):
         breaches.append("TEMP")
         if "TEMP" not in last_threshold_alert_time or (current_time - last_threshold_alert_time["TEMP"]) >= THRESHOLD_ALERT_COOLDOWN:
-            send_webhook_notification(
-                "THRESHOLD",
-                "Temperature threshold breached",
-                {"metric": "TEMP", "value": temp, "unit": "C"}
-            )
+            send_webhook_notification("THRESHOLD", "Temperature threshold breached", {"metric": "TEMP", "value": temp, "unit": "C"})
             last_threshold_alert_time["TEMP"] = current_time
-    
     if is_metric_outside("HUMIDITY", hum):
         breaches.append("HUMIDITY")
         if "HUMIDITY" not in last_threshold_alert_time or (current_time - last_threshold_alert_time["HUMIDITY"]) >= THRESHOLD_ALERT_COOLDOWN:
-            send_webhook_notification(
-                "THRESHOLD",
-                "Humidity threshold breached",
-                {"metric": "HUMIDITY", "value": hum, "unit": "%"}
-            )
+            send_webhook_notification("THRESHOLD", "Humidity threshold breached", {"metric": "HUMIDITY", "value": hum, "unit": "%"})
             last_threshold_alert_time["HUMIDITY"] = current_time
-    
     if is_metric_outside("CO2", co2):
         breaches.append("CO2")
         if "CO2" not in last_threshold_alert_time or (current_time - last_threshold_alert_time["CO2"]) >= THRESHOLD_ALERT_COOLDOWN:
-            send_webhook_notification(
-                "THRESHOLD",
-                "CO2 threshold breached",
-                {"metric": "CO2", "value": co2, "unit": "ppm"}
-            )
+            send_webhook_notification("THRESHOLD", "CO2 threshold breached", {"metric": "CO2", "value": co2, "unit": "ppm"})
             last_threshold_alert_time["CO2"] = current_time
-
     if is_metric_outside("LIGHT", light_level):
         breaches.append("LIGHT")
         if "LIGHT" not in last_threshold_alert_time or (current_time - last_threshold_alert_time["LIGHT"]) >= THRESHOLD_ALERT_COOLDOWN:
-            send_webhook_notification(
-                "THRESHOLD",
-                "Light threshold breached",
-                {"metric": "LIGHT", "value": light_level, "unit": "lux"}
-            )
+            send_webhook_notification("THRESHOLD", "Light threshold breached", {"metric": "LIGHT", "value": light_level, "unit": "lux"})
             last_threshold_alert_time["LIGHT"] = current_time
-    
     return breaches
 
-async def main_loop():
-    """Main async loop for EcoGuard operation."""
-    global last_send, last_sensor_poll, not_ready_seconds
-    
-    # Initialize sensors
-    await init_all_sensors()
-    
-    print("Reading SCD41...")
-    last_send = 0
-    last_sensor_poll = 0
+async def sensor_reading_task():
     not_ready_seconds = 0
-
-    if scd4x is None:
-        print("ERROR: Sensor not initialized!")
-
     while True:
         try:
-            handle_buttons()
-            ensure_wifi()
-            now = time.time()
+            if scd4x is None:
+                await asyncio.sleep(5)
+                continue
+            if scd4x.data_ready:
+                co2, temp, hum = scd4x.measurement
+                light_level = read_light()
+                sensor_data['co2'] = co2
+                sensor_data['temp'] = temp
+                sensor_data['hum'] = hum
+                sensor_data['light'] = light_level
+                sensor_data['breaches'] = evaluate_thresholds(temp, hum, co2, light_level)
+                not_ready_seconds = 0
+            else:
+                not_ready_seconds += 1
+                if not_ready_seconds >= 3:
+                    await reinit_scd41()
+                    not_ready_seconds = 0
+        except Exception as e:
+            print("Sensor task error:", e)
+            await reinit_scd41()
+            not_ready_seconds = 0
+        await asyncio.sleep(SCD41_READ_INTERVAL)
+
+async def backend_send_task():
+    while True:
+        try:
+            if ble_broadcasting or not wifi_ok:
+                await asyncio.sleep(SEND_INTERVAL)
+                continue
+            co2 = sensor_data.get('co2')
+            temp = sensor_data.get('temp')
+            hum = sensor_data.get('hum')
+            light = sensor_data.get('light')
+            if co2 is not None:
+                send_to_backend(co2, temp, hum, light)
+        except Exception as e:
+            print("Backend task error:", e)
+        await asyncio.sleep(SEND_INTERVAL)
+
+async def threshold_fetch_task():
+    while True:
+        try:
+            if not ble_broadcasting and wifi_ok:
+                fetch_thresholds()
+        except Exception as e:
+            print("Threshold task error:", e)
+        await asyncio.sleep(THRESHOLD_REFRESH_INTERVAL)
+
+async def command_check_task():
+    global last_command_check
+    while True:
+        try:
+            if not wifi_ok:
+                await asyncio.sleep(5)
+                continue
             interval = BLE_COMMAND_CHECK_INTERVAL if ble_broadcasting else COMMAND_CHECK_INTERVAL
-            if wifi_ok and (now - last_command_check) >= interval:
+            now = time.time()
+            if (now - last_command_check) >= interval:
                 if ble_broadcasting:
                     fetch_ble_commands_only()
                 else:
                     fetch_and_execute_commands()
-            if scd4x is None:
-                if oled is not None:
-                    oled.fill(0)
-                    oled.text("Sensor ERROR", 0, 10)
-                    oled.show()
-                await asyncio.sleep(5)
-                continue
-                
-            current_time = time.time()
-            if (current_time - last_sensor_poll) >= SCD41_READ_INTERVAL:
-                last_sensor_poll = current_time
+        except Exception as e:
+            print("Command task error:", e)
+        await asyncio.sleep(5)
 
-                if scd4x.data_ready:
-                    if not ble_broadcasting and wifi_ok and (current_time - last_threshold_fetch) >= THRESHOLD_REFRESH_INTERVAL:
-                        fetch_thresholds()
-                    if thresholds and thresholds != last_printed_thresholds:
-                        print("Thresholds changed:", format_thresholds(thresholds))
-                        last_printed_thresholds = dict(thresholds)
+async def ble_update_task():
+    while True:
+        try:
+            if ble_broadcasting:
+                co2 = sensor_data.get('co2', 0)
+                temp = sensor_data.get('temp', 0.0)
+                hum = sensor_data.get('hum', 0.0)
+                light = sensor_data.get('light', 0)
+                ble_update_metrics(co2, temp, hum, light)
+        except Exception as e:
+            print("BLE task error:", e)
+        await asyncio.sleep(BLE_UPDATE_INTERVAL)
 
-                    co2, temp, hum = scd4x.measurement
-                    light_level = read_light()
-                    threshold_breaches = evaluate_thresholds(temp, hum, co2, light_level)
-                    not_ready_seconds = 0
-
-                    if threshold_breaches:
+async def display_task():
+    while True:
+        try:
+            handle_buttons()
+            if oled_override_until <= time.time():
+                co2 = sensor_data.get('co2')
+                temp = sensor_data.get('temp')
+                hum = sensor_data.get('hum')
+                light = sensor_data.get('light')
+                breaches = sensor_data.get('breaches', [])
+                if co2 is not None and oled is not None:
+                    readings(co2, temp, hum, light, breaches)
+                    if breaches:
                         set_led((255, 0, 0))
                     else:
                         set_led(DEFAULT_LED_COLOR)
-
-                    readings(co2, temp, hum, light_level, threshold_breaches)
-
-                    if ble_broadcasting:
-                        ble_update_metrics(co2, temp, hum, light_level)
-
-                    measurement_time = time.time()
-                    if not ble_broadcasting and wifi_ok and (measurement_time - last_send) >= SEND_INTERVAL:
-                        success = send_to_backend(co2, temp, hum, light_level)
-                        last_send = measurement_time
-                        if oled is not None and oled_override_until <= time.time():
-                            oled.fill(0)
-                            status_line = "OK" if success else "SEND ERR"
-                            if threshold_breaches:
-                                status_line = "ALRT {}".format(",".join(threshold_breaches)[:6])
-                            oled.text(status_line[:12], 0, 0)
-                            oled.text("T{} H{}".format(int(temp), int(hum))[:16], 0, 10)
-                            oled.text("C{} L{}".format(int(co2), light_level if light_level is not None else "-")[:16], 0, 20)
-                            oled.show()
-                else:
-                    if oled is not None:
-                        oled.fill(0)
-                        oled.text("Waiting...", 0, 10)
-                        oled.show()
-                    not_ready_seconds += SCD41_READ_INTERVAL
-                    if not_ready_seconds >= SCD41_REINIT_TIMEOUT:
-                        await reinit_scd41()
-                        not_ready_seconds = 0
         except Exception as e:
-            if oled is not None:
-                oled.fill(0)
-                oled.text("Sensor ERROR", 0, 10)
-                oled.show()
-            print("Sensor error:", e)
-            await asyncio.sleep(5)
-            await reinit_scd41()
-            not_ready_seconds = 0
+            print("Display task error:", e)
+        await asyncio.sleep(0.5)
 
-        await asyncio.sleep(LOOP_DELAY)
+async def wifi_monitor_task():
+    while True:
+        try:
+            ensure_wifi()
+        except Exception as e:
+            print("WiFi task error:", e)
+        await asyncio.sleep(30)
+
+async def main():
+    print("EcoGuard async starting...")
+    await init_all_sensors()
+    ensure_wifi()
+    if wifi_ok:
+        fetch_thresholds()
+    await asyncio.gather(
+        sensor_reading_task(),
+        backend_send_task(),
+        threshold_fetch_task(),
+        command_check_task(),
+        ble_update_task(),
+        display_task(),
+        wifi_monitor_task()
+    )
 
 print("Starting EcoGuard...")
-
 ensure_credentials()
-
 wifi_ok = connect_wifi()
 if not wifi_ok:
-    print("WARNING: No WiFi, data will not be sent to backend!")
+    print("WARNING: No WiFi!")
 else:
     fetch_thresholds()
 
-asyncio.run(main_loop())
+try:
+    asyncio.run(main())
+except KeyboardInterrupt:
+    print("Stopped")
+except Exception as e:
+    print("Fatal error:", e)

@@ -69,7 +69,7 @@ public class Alert {
      * Whether the alert has been acknowledged by a user.
      * Defaults to false when alert is created.
      */
-    @Column(name = "acknowledged", nullable = false)
+    @Column(name = "acknowledged", nullable = true)
     private Boolean acknowledged = false;
 
     /**
