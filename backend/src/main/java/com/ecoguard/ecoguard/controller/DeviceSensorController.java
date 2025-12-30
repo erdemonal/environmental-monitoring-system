@@ -1,6 +1,7 @@
 package com.ecoguard.ecoguard.controller;
 
 import com.ecoguard.ecoguard.dto.DeviceCommandResponse;
+import com.ecoguard.ecoguard.dto.DeviceConfigResponse;
 import com.ecoguard.ecoguard.dto.SensorDataPayload;
 import com.ecoguard.ecoguard.dto.ThresholdDeviceResponse;
 import com.ecoguard.ecoguard.entity.Alert;
@@ -8,8 +9,11 @@ import com.ecoguard.ecoguard.entity.AlertType;
 import com.ecoguard.ecoguard.entity.DeviceCommand;
 import com.ecoguard.ecoguard.entity.MetricType;
 import com.ecoguard.ecoguard.entity.SensorData;
+import com.ecoguard.ecoguard.entity.Notification;
 import com.ecoguard.ecoguard.repository.AlertRepository;
 import com.ecoguard.ecoguard.repository.DeviceCommandRepository;
+import com.ecoguard.ecoguard.repository.DeviceConfigRepository;
+import com.ecoguard.ecoguard.repository.NotificationRepository;
 import com.ecoguard.ecoguard.repository.SensorDataRepository;
 import com.ecoguard.ecoguard.repository.ThresholdRepository;
 import com.ecoguard.ecoguard.repository.UserRepository;
@@ -54,6 +58,8 @@ public class DeviceSensorController {
     private final DeviceCommandRepository deviceCommandRepository;
     private final UserRepository userRepository;
     private final PushNotificationService pushNotificationService;
+    private final NotificationRepository notificationRepository;
+    private final DeviceConfigRepository deviceConfigRepository;
 
     /**
      * Constructs a new DeviceSensorController with required dependencies.
@@ -62,19 +68,27 @@ public class DeviceSensorController {
      * @param thresholdRepository repository for threshold retrieval
      * @param alertRepository repository for alert creation
      * @param deviceCommandRepository repository for command management
+     * @param userRepository repository for user operations
+     * @param pushNotificationService service for sending push notifications
+     * @param notificationRepository repository for notification persistence
+     * @param deviceConfigRepository repository for device configuration
      */
     public DeviceSensorController(SensorDataRepository sensorDataRepository,
                                   ThresholdRepository thresholdRepository,
                                   AlertRepository alertRepository,
                                   DeviceCommandRepository deviceCommandRepository,
                                   UserRepository userRepository,
-                                  PushNotificationService pushNotificationService) {
+                                  PushNotificationService pushNotificationService,
+                                  NotificationRepository notificationRepository,
+                                  DeviceConfigRepository deviceConfigRepository) {
         this.sensorDataRepository = sensorDataRepository;
         this.thresholdRepository = thresholdRepository;
         this.alertRepository = alertRepository;
         this.deviceCommandRepository = deviceCommandRepository;
         this.userRepository = userRepository;
         this.pushNotificationService = pushNotificationService;
+        this.notificationRepository = notificationRepository;
+        this.deviceConfigRepository = deviceConfigRepository;
     }
 
     /**
@@ -191,6 +205,30 @@ public class DeviceSensorController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    /**
+     * Retrieves device configuration for the authenticated device.
+     * <p>
+     * Called by the ESP32 device to fetch its network configuration (WiFi credentials
+     * and backend connection info). Returns configuration if available, or 404 if not found.
+     * This allows devices to retrieve configuration remotely instead of hardcoding.
+     *
+     * @param deviceKey the device key from the X-Device-Key header
+     * @return ResponseEntity containing device configuration, or 404 Not Found if not configured
+     */
+    @GetMapping("/config")
+    public ResponseEntity<DeviceConfigResponse> getConfig(@RequestHeader("X-Device-Key") String deviceKey) {
+        return deviceConfigRepository.findByDeviceKey(deviceKey)
+                .map(config -> ResponseEntity.ok(new DeviceConfigResponse(
+                        config.getDeviceKey(),
+                        config.getWifiSsid(),
+                        config.getWifiPassword(),
+                        config.getBackendHost(),
+                        config.getBackendPort(),
+                        config.getUpdatedAt()
+                )))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 
     /**
      * Evaluates a sensor value against its threshold and creates an alert if breached.
@@ -219,6 +257,7 @@ public class DeviceSensorController {
 
     /**
      * Sends a push notification to all users with a registered device token.
+     * Also persists notification records to the database for tracking.
      *
      * @param alert the alert that was created
      */
@@ -227,11 +266,19 @@ public class DeviceSensorController {
         String body = "Value " + alert.getValue() + " is outside thresholds.";
         logger.info("Notifying users about alert: {} | {}", title, body);
         userRepository.findByDeviceTokenIsNotNull()
-                .forEach(user -> pushNotificationService.sendPushNotification(
-                        user.getDeviceToken(),
-                        title,
-                        body
-                ));
+                .forEach(user -> {
+                    // Send push notification
+                    pushNotificationService.sendPushNotification(
+                            user.getDeviceToken(),
+                            title,
+                            body
+                    );
+                    // Save notification record to database
+                    Notification notification = new Notification();
+                    notification.setUser(user);
+                    notification.setAlert(alert);
+                    notificationRepository.save(notification);
+                });
     }
 
     /**
