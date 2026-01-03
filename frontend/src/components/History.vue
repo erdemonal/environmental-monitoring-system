@@ -10,10 +10,13 @@ function formatLocal(date) {
     pad(date.getDate())
   ].join('-') + 'T' + [pad(date.getHours()), pad(date.getMinutes()), pad(date.getSeconds())].join(':')
 }
+// normalizes datetime local input to ISO format
+// handles browser inconsistencies: some return "YYYY-MM-DDTHH:mm" (16 chars),
+// others return full ISO with seconds. We standardize to 19 chars.
 function normalizeInput(value) {
   if (!value) return ''
-  if (value.length === 16) return value + ':00'
-  if (value.length > 19) return value.slice(0, 19)
+  if (value.length === 16) return value + ':00'  // add missing seconds
+  if (value.length > 19) return value.slice(0, 19)  // trim excess precision
   return value
 }
 
@@ -30,6 +33,8 @@ function fmt(dt) {
   return new Date(dt).toLocaleString()
 }
 
+// generates SVG path string for line charts
+// maps timestamp/value pairs to SVG coordinates with scaling
 function linePath(points, width, height, padding = 16) {
   if (!points.length) return ''
   const xs = points.map(p => new Date(p.timestamp).getTime())
@@ -38,10 +43,13 @@ function linePath(points, width, height, padding = 16) {
   const maxX = Math.max(...xs)
   const minY = Math.min(...ys)
   const maxY = Math.max(...ys)
+  // prevent division by zero if all values are the same
   const spanX = Math.max(1, maxX - minX)
   const spanY = Math.max(1, maxY - minY)
+  // linear mapping: data range to SVG coordinate range
   const mapX = x => padding + ((x - minX) / spanX) * (width - padding * 2)
   const mapY = y => height - padding - ((y - minY) / spanY) * (height - padding * 2)
+  // M = move to first point, L = line to subsequent points
   return points.map((p, i) => `${i ? 'L' : 'M'}${mapX(new Date(p.timestamp).getTime())},${mapY(p.value)}`).join(' ')
 }
 

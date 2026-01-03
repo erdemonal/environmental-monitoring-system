@@ -90,6 +90,7 @@ function statusHint(cmd) {
 let refreshInterval = null
 onMounted(() => {
   loadCommands()
+  // check command status every 5 seconds
   refreshInterval = setInterval(loadCommands, 5000)
 })
 onUnmounted(() => {

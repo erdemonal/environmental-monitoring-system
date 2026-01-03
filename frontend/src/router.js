@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 
+// using hash based routing instead of Vue Router for simplicity
 export const currentRoute = ref(location.hash.slice(1) || '/')
 
 window.addEventListener('hashchange', () => {
@@ -8,9 +9,11 @@ window.addEventListener('hashchange', () => {
 
 export function navigate(path) {
   if (!path.startsWith('/')) path = '/' + path
+  // only update hash if it is different to avoid unnecessary navigation
   if (location.hash.slice(1) !== path) {
     location.hash = path
   } else {
+    // force reactivity update even if hash didn't change
     currentRoute.value = path
   }
 }

@@ -16,6 +16,7 @@ const alertFilterSeverity = ref('ALL')
 const alertsPage = ref(1)
 const pageSize = 5
 
+// decides alert importance based on metric type and value
 function alertSeverity(a) {
   const t = (a.alertType || a.type || '').toUpperCase()
   const metric = (a.metricType || '').toUpperCase()
