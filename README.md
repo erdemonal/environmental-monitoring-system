@@ -1,4 +1,3 @@
-# EcoGuard 
 
 Environmental monitoring system with ESP32, Spring Boot backend, Vue.js frontend, and Android mobile app
 
