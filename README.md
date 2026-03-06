@@ -9,7 +9,7 @@ Additional Sources (Demo, Presentation): https://seafile.emse.fr/d/8a7bd646bf064
 Clone the repository:
 
 ```bash
-git clone https://github.com/erdemonal/EcoGuard.git
+git clone https://github.com/erdemonal/environmental-monitoring-system.git
 cd EcoGuard
 ```
 
